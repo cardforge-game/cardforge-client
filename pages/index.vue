@@ -119,8 +119,58 @@
 </template>
 
 <script lang="ts">
+import Swal from "sweetalert2";
 import Vue from "vue";
-export default Vue.extend({});
+import connection from "~/services/connection";
+
+export default Vue.extend({
+    methods: {
+        async initGame(action: "createGame" | "joinGame") {
+            const res = await Swal.fire({
+                title: "Enter in a username.",
+                input: "text",
+                inputLabel:
+                    "Make it short, sweet, and representative of your greatness.",
+                showCancelButton: true,
+                inputValidator: (value) =>
+                    value.trim().length === 0 ? "Type in a username." : null,
+            });
+
+            if (!(res.isDenied || res.isDismissed)) {
+                this[action](res.value);
+            }
+        },
+        async createGame(username: string) {
+            const creationResponse = await connection.createRoom(username);
+
+            if (creationResponse.success && connection.room) {
+                connection.temp.host = true;
+                this.$router.push(`/${connection.room.id}`);
+            } else {
+                Swal.fire(
+                    "That didn't work.",
+                    `Unable to create a room.\nReason: ${creationResponse.error}`,
+                    "error"
+                );
+            }
+        },
+        async joinGame(username: string) {
+            const codePrompt = await Swal.fire({
+                title: "Enter in a room code.",
+                input: "text",
+                inputLabel: "An alphanumeric code.",
+                showCancelButton: true,
+                inputValidator: (value) =>
+                    value.trim().length === 0 ? "Type in a code." : null,
+            });
+
+            if (!(codePrompt.isDenied || codePrompt.isDismissed) && codePrompt.value) {
+                
+                this.$router.push(`/${codePrompt.value}`);
+            }
+        },
+    },
+});
 </script>
 
 <style scoped>

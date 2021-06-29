@@ -1,6 +1,8 @@
 <template>
     <header>
-        <a href="http://localhost:3000/"><img src="~/assets/images/logo-header.png" /></a>
+        <a href="http://localhost:3000/">
+            <img src="~/assets/images/logo-header.png" />
+        </a>
 
         <div class="right-side">
             <portal-target name="header"></portal-target>
