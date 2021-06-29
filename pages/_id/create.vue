@@ -2,11 +2,21 @@
     <main>
         <MoneyIndicator />
 
-        <section class="card-preview">
+        <section class="card-preview section">
             <h1>
                 You've made <b class="h1">{{ acceptedCards }}</b> cards.
             </h1>
             <br />
+
+            <details open>
+                <summary class="selectable unhighlightable bold h4">
+                    Card Preview
+                </summary>
+                <Card :size="30" :card="cardData" :show-details="true" />
+                <p v-if="cardData.cardCost">
+                    Card Cost: <b>${{ cardData.cardCost }}</b>
+                </p>
+            </details>
 
             <details v-if="currentCache.length > 0">
                 <summary class="selectable unhighlightable bold h4">
@@ -21,22 +31,17 @@
 
                     <div class="button-group">
                         <button @click="loadCard(card)">Load Card</button>
-                        <button @click="deleteCard(i)">Delete</button>
+                        <button
+                            style="--type: var(--danger)"
+                            @click="deleteCard(i)"
+                        >
+                            Delete
+                        </button>
                     </div>
                 </div>
             </details>
-
-            <details open>
-                <summary class="selectable unhighlightable bold h4">
-                    Card Preview
-                </summary>
-                <Card :size="30" :card="cardData" :show-details="true" />
-                <p v-if="cardData.cardCost">
-                    Card Cost: <b>${{ cardData.cardCost }}</b>
-                </p>
-            </details>
         </section>
-        <section>
+        <section class="section">
             <form @submit.prevent="publishCard">
                 <div class="subsection">
                     <h3>Card Stats</h3>
@@ -132,6 +137,7 @@
                 <div class="subsection">
                     <div class="button-group">
                         <button
+                            type="button"
                             style="--type: var(--primary)"
                             @click="previewCard"
                         >
@@ -160,7 +166,6 @@ export default Vue.extend({
             cardData: {
                 name: "Test Card",
                 health: 10,
-                cardCost: 2,
                 imgURL: "https://cdn.discordapp.com/icons/838576957909237791/4eb40941d1b57d2ce52e58182792e0e7.webp?size=256",
                 attacks: [
                     {
@@ -250,25 +255,36 @@ export default Vue.extend({
 
 <style scoped>
 main {
+    display: flex;
     flex-direction: row;
     align-items: stretch;
 }
 main section {
-    margin: 1.5rem 1.5rem;
     flex: 1;
-    overflow-y: auto;
+    overflow-y: scroll;
+    padding: 2rem 1rem;
 }
 
 .card-preview {
     text-align: center;
+    padding: 1rem;
 }
 
-details:first-of-type summary {
+.card {
+    margin: 1rem;
+}
+
+details {
+    overflow: hidden;
+    background: var(--dark);
+}
+
+details:first-of-type {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
 
-details:last-of-type summary {
+details:last-of-type {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
@@ -283,12 +299,10 @@ details:last-of-type summary {
 .card {
     text-align: left;
     display: inline-flex;
-    margin-top: 2rem;
 }
 
 .previous-card {
     padding: 1rem;
-    background: var(--dark);
     display: flex;
     align-items: center;
 }
@@ -297,7 +311,7 @@ details:last-of-type summary {
     color: var(--light);
 }
 
-.previous-card button {
+.previous-card .button-group {
     margin-left: auto;
 }
 
