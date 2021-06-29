@@ -1,0 +1,36 @@
+/* Button */
+button {
+    --type: var(--primary);
+
+    background: var(--type);
+    color: var(--light-static);
+
+    padding: 0.5rem;
+    margin: 0.25rem;
+
+    border-radius: 10px;
+    border: none;
+
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+button:hover,
+button:focus {
+    box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.75),
+        2px 2px 5px rgba(0, 0, 0, 0.75);
+}
+
+/* Button Group */
+.button-group button {
+    border-radius: 0;
+    margin: 0 -2.5px;
+}
+
+.button-group button:first-of-type {
+    border-radius: 10px 0 0 10px;
+}
+
+.button-group button:last-of-type {
+    border-radius: 0 10px 10px 0;
+}
