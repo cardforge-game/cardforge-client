@@ -11,10 +11,7 @@
                         <b>Code:</b> {{ connection.room.id }}
                     </div>
                 </div>
-                <button
-                    style="--normal-color: var(--success)"
-                    @click="startGame"
-                >
+                <button style="--type: var(--success)" @click="startGame">
                     Start Game
                 </button>
             </div>
