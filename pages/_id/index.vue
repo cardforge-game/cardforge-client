@@ -35,6 +35,8 @@ export default Vue.extend({
         },
     },
     async mounted() {
+        connection.redirect = (path: string) => this.$router.push(path);
+
         if (connection.temp.host) {
             // If the user created the room:
 
@@ -98,6 +100,11 @@ export default Vue.extend({
                 username: "",
             };
         }
+    },
+    methods: {
+        startGame() {
+            connection.room?.send("startGame");
+        },
     },
 });
 </script>

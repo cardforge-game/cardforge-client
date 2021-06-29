@@ -54,4 +54,16 @@ export default {
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {},
+
+    // Environment Variables:
+    env: {
+        SERVER_ENDPOINT:
+            process.env.NODE_ENV === "production"
+                ? "wss://cardforge-server.herokuapp.com/"
+                : "ws://localhost:8080",
+    },
+
+    generate: {
+        fallback: true,
+    },
 };

@@ -22,7 +22,7 @@ export default Vue.extend({
     props: {
         player: {
             type: Object as PropType<IPlayer>,
-            required: true,
+            default: undefined,
         },
     },
     computed: {

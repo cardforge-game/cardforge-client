@@ -148,7 +148,7 @@ export default Vue.extend({
 
             if (creationResponse.success && connection.room) {
                 connection.temp.host = true;
-                this.$router.push(`/${connection.room.id}`);
+                this.$router.push(`/${connection.room?.id}`);
             } else {
                 Swal.fire(
                     "That didn't work.",

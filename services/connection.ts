@@ -11,7 +11,7 @@ const client = new ColyseusClient(process.env.SERVER_ENDPOINT);
 
 let timerInterval = -1;
 
-export default new Vue({
+const connection = new Vue({
     data() {
         return {
             room: undefined as Room<IRoom> | undefined,
@@ -28,16 +28,27 @@ export default new Vue({
                 host: false,
             },
             time: -1,
+            redirect: undefined as ((path: string) => void) | undefined,
         };
     },
 
     computed: {
+        phase(): PhaseT {
+            return this.state.phase;
+        },
         currentPlayer(): IPlayer | undefined {
             return (
                 this.state.players &&
                 this.room &&
                 this.state.players[this.room.sessionId]
             );
+        },
+    },
+    watch: {
+        phase(newPhase: PhaseT, oldPhase: PhaseT) {
+            if (newPhase !== oldPhase) {
+                this.redirect?.(formPathFromPhase(newPhase, this.room?.id));
+            }
         },
     },
 
@@ -47,7 +58,9 @@ export default new Vue({
                 this.room = await client.create<IRoom>(ROOM_NAME, {
                     name: username,
                 });
+
                 this.initEvents();
+
                 return {
                     success: true,
                 };
@@ -73,16 +86,11 @@ export default new Vue({
 
         initEvents() {
             // Reset events:
-            this.resetGameState();
+            this.room?.removeAllListeners();
+            this.eventRegistered = false;
 
             // Listen for state changes and update in Vue:
             this.room?.onStateChange((newState) => {
-                if (newState.phase !== this.state.phase) {
-                    this.$router.push(
-                        formPathFromPhase(newState.phase, this.room?.id)
-                    );
-                }
-
                 this.state = JSON.parse(JSON.stringify(newState));
             });
 
@@ -106,7 +114,7 @@ export default new Vue({
                 await Swal.fire("Error", error, "error");
 
                 if (error.toLowerCase().includes("name already in use")) {
-                    this.$router.push("/");
+                    this.redirect?.("/");
                 }
             });
 
@@ -147,3 +155,8 @@ export default new Vue({
         },
     },
 });
+
+export default connection;
+
+// @ts-ignore
+process.env.NODE_ENV === "development" && (window._connection = connection);

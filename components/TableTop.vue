@@ -125,7 +125,7 @@ export default Vue.extend({
 
 <style scoped>
 .table {
-    background: url(/logo.png), radial-gradient(#6dd5ed, #387989);
+    background: url(~/assets/images/logo.png), radial-gradient(#6dd5ed, #387989);
 
     background-size: 400px 224px, cover;
     background-repeat: no-repeat;
