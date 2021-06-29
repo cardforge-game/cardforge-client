@@ -238,7 +238,7 @@ header {
     bottom: 2px;
     left: 2px;
 
-    background: var(--success-dark);
+    background: var(--success);
 }
 
 .card-health * {

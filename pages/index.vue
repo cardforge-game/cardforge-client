@@ -67,7 +67,7 @@
                     To create a game room, you can click the
                     <a
                         class="bold selectable"
-                        style="color: var(--primary-dark)"
+                        style="color: var(--primary)"
                         @click="initGame('createGame')"
                     >
                         Start Game
@@ -76,7 +76,7 @@
                     join them using their code by clicking the
                     <a
                         class="bold selectable"
-                        style="color: var(--success-dark)"
+                        style="color: var(--success)"
                         @click="initGame('joinGame')"
                     >
                         Join Game

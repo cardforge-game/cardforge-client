@@ -1,6 +1,6 @@
 <template>
     <footer>
-        <span v-if="!connection.currentPlayer.activeCard" class="helpText">
+        <span v-if="!connection.currentPlayer.activeCard" class="help-text">
             Click on a card from your hand to play it!
         </span>
 
@@ -50,17 +50,19 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.helpText {
-    color: white;
+.help-text {
+    color: var(--light);
 }
+
 footer {
     justify-self: flex-end;
     align-self: stretch;
     position: relative;
     height: 2.5rem;
 }
+
 .deck {
-    background: var(--success-dark);
+    background: var(--success);
     position: absolute;
     left: 0;
     right: 0;
@@ -72,10 +74,12 @@ footer {
     align-items: center;
     justify-content: center;
 }
+
 .card {
     margin: 0 -2rem;
     transition: transform 0.25s ease-in-out;
 }
+
 .card:hover {
     transform: translateY(-20rem) scale(1.25) !important;
     z-index: 500 !important;

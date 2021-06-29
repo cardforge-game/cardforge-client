@@ -77,7 +77,7 @@
                     Card Attacks
                     <button
                         v-if="cardData.attacks.length < 3"
-                        style="--type: var(--success-darker)"
+                        style="--type: var(--success)"
                         @click="
                             cardData.attacks.push({
                                 name: '',
@@ -272,7 +272,7 @@ details:last-of-type summary {
 }
 
 .card-preview summary {
-    background: var(--primary-dark);
+    background: var(--primary);
     color: var(--light);
     padding: 1rem;
     text-align: left;

@@ -23,7 +23,7 @@ export default Vue.extend({
 
 <style scoped>
 span {
-    background: var(--success-dark);
+    background: var(--success);
     padding: 0.25rem 0.5rem;
     border-radius: 10px;
     margin-left: 0.25rem;

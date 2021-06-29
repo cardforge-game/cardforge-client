@@ -163,11 +163,11 @@ main {
 }
 
 .card-overhead .card-price-display {
-    background-color: var(--success-dark);
+    background-color: var(--success);
 }
 
 .card-overhead .card-buy-button {
-    background-color: var(--primary-dark);
+    background-color: var(--primary);
     color: var(--light);
 }
 
