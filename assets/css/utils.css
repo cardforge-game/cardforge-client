@@ -12,3 +12,15 @@
 .section {
     padding: 1rem;
 }
+
+.lead {
+    font-size: 1.125rem;
+}
+
+.level {
+    display: flex;
+}
+
+.level .level-item {
+    flex: 1;
+}

@@ -1,17 +1,10 @@
 :root {
-    --primary:  #01a5d3;
+    --primary:  #0092e7;
+    --light-primary: #98d4f7;
+    --dark-primary: #064264;
+
     --success:  #03b45f; 
     --danger:   #dd4744;
     --dark:     #1E2433;
     --light:    white;
-
-    --light-static: white;
-    --dark-static: #1E2433;
-}
-
-@media only screen and (prefers-color-scheme: dark) {
-    :root {
-        --dark: white;
-        --light: #1E2F33;
-    }
 }

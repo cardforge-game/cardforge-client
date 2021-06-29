@@ -3,9 +3,9 @@ button {
     --type: var(--primary);
 
     background: var(--type);
-    color: var(--light-static);
+    color: var(--light);
 
-    padding: 0.5rem;
+    padding: 0.5rem 0.75rem;
     margin: 0.25rem;
 
     border-radius: 10px;
@@ -13,18 +13,28 @@ button {
 
     text-transform: uppercase;
     font-weight: bold;
+
+    border: 2px solid var(--type);
+}
+
+button.large {
+    font-size: 1.75rem;
 }
 
 button:hover,
 button:focus {
-    box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.75),
-        2px 2px 5px rgba(0, 0, 0, 0.75);
+    border-color: var(--light);
 }
 
 /* Button Group */
 .button-group button {
     border-radius: 0;
-    margin: 0 -2.5px;
+    margin: 0 -3px;
+}
+
+.button-group button:hover,
+.button-group button:focus {
+    transform: translateZ(1rem);
 }
 
 .button-group button:first-of-type {
