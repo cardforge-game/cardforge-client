@@ -1,4 +1,9 @@
-declare type PhaseT = "WAITING" | "CREATING" | "DECK" | "FIGHT";
+declare type PhaseT =
+    | "WAITING"
+    | "CREATING"
+    | "BUYING"
+    | "FIGHTING"
+    | "RESULTS";
 
 declare interface IAttack {
     name: string;

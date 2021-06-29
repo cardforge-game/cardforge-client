@@ -7,7 +7,16 @@ import audio from "~/services/audio";
 const ROOM_NAME = "standard";
 
 const client = new ColyseusClient(process.env.SERVER_ENDPOINT);
+
 let timerInterval = -1;
+
+const PHASE_ROUTES: Record<PhaseT, string> = {
+    WAITING: "",
+    CREATING: "create",
+    BUYING: "buy",
+    FIGHTING: "fight",
+    RESULTS: "results",
+};
 
 export default new Vue({
     data() {
@@ -74,12 +83,14 @@ export default new Vue({
             this.resetGameState();
 
             // Listen for state changes and update in Vue:
-            this.room?.onStateChange.once((state) => {
-                this.state = JSON.parse(JSON.stringify(state));
-            });
+            this.room?.onStateChange((newState) => {
+                if (newState.phase !== this.state.phase) {
+                    this.$router.push(
+                        `/${this.room?.id}/${PHASE_ROUTES[newState.phase]}`
+                    );
+                }
 
-            this.room?.onStateChange((state) => {
-                this.state = JSON.parse(JSON.stringify(state));
+                this.state = JSON.parse(JSON.stringify(newState));
             });
 
             // Update card library when received:
