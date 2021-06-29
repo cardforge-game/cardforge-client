@@ -17,7 +17,7 @@
             </div>
         </portal>
 
-        <section class="level section hero">
+        <section class="container level hero">
             <div class="level-item">
                 <img src="~/assets/images/logo.png" />
                 <p class="lead bold">
@@ -30,7 +30,7 @@
             </div>
         </section>
 
-        <section class="section game-buttons">
+        <section class="container game-buttons">
             <div class="hero-section-2-small" style="padding-bottom: 0px">
                 <h5 style="color: white">
                     Start a game by creating a room, or enter someone else's
@@ -57,7 +57,7 @@
             </div>
         </section>
 
-        <section class="instructions">
+        <section class="container instructions">
             <h1 class="bold">How to Play</h1>
 
             <div class="text-grid">
@@ -119,6 +119,10 @@
 </template>
 
 <style scoped>
+main {
+    padding: 0 calc(calc(100vw - 2250px) / 2);
+}
+
 .hero.level {
     align-items: center;
 }
@@ -137,8 +141,14 @@
 }
 
 .game-buttons {
+    padding: 1rem;
+
     background: var(--dark);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+
     text-align: center;
+
+    border-radius: 20px;
 }
 
 .game-buttons > div {
@@ -147,10 +157,13 @@
 
 .instructions {
     text-align: center;
-    margin: 1rem;
+
     margin-top: 2rem;
+
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+
     border-radius: 20px;
+
     overflow: hidden;
 }
 
