@@ -207,6 +207,7 @@ main {
 
 .section-header {
     padding: 1rem;
+    margin: -2px;
 
     border-bottom: 2px var(--dark) solid;
 

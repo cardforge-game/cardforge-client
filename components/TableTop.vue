@@ -140,6 +140,12 @@ export default Vue.extend({
     margin: 0;
     width: 100%;
     padding-bottom: 1rem;
+
+    position: relative;
+}
+
+.card-dialog-perspective {
+    position: fixed;
 }
 
 .row {
@@ -173,11 +179,11 @@ export default Vue.extend({
     }
 
     .row.top {
-        --rotate: --180deg;
+        --rotate: 180deg;
     }
 
     .row.top .no-active-username {
-        --rotate: -180deg;
+        --rotate: 180deg;
     }
 
     .row.top .card:first-of-type::v-deep,

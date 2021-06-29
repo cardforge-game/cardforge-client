@@ -8,17 +8,14 @@
             </h1>
             <br />
 
-            <details open>
+            <details open class="card-side">
                 <summary class="selectable unhighlightable bold h4">
                     Card Preview
                 </summary>
                 <Card :size="30" :card="cardData" :show-details="true" />
-                <p v-if="cardData.cardCost">
-                    Card Cost: <b>${{ cardData.cardCost }}</b>
-                </p>
             </details>
 
-            <details v-if="currentCache.length > 0">
+            <details v-if="currentCache.length > 0" class="card-side">
                 <summary class="selectable unhighlightable bold h4">
                     Previous Cards
                 </summary>
@@ -97,42 +94,47 @@
                 <p v-if="cardData.attacks.length === 0" class="field">
                     You have no attacks setup! Click "Add Attack"
                 </p>
-                <div
+                <details
                     v-for="(a, i) in cardData.attacks"
                     :key="`attackCardCreation-${i}`"
+                    open
                     class="attack-form"
                 >
-                    <div class="field">
-                        <label>Attack Name</label>
-                        <input
-                            v-model="a.name"
-                            placeholder="Slap"
-                            maxlength="20"
-                            required
-                        />
-                    </div>
+                    <summary class="h4 bold section">{{ a.name }}</summary>
 
-                    <div class="field">
-                        <label>Attack Description</label>
-                        <textarea
-                            v-model.lazy="a.desc"
-                            maxlength="100"
-                            :placeholder="`${
-                                cardData.name || 'someone'
-                            } slaps the enemy dealing 10 damage!`"
-                            required
-                        />
-                    </div>
+                    <div class="section">
+                        <div class="field">
+                            <label>Attack Name</label>
+                            <input
+                                v-model="a.name"
+                                placeholder="Slap"
+                                maxlength="20"
+                                required
+                            />
+                        </div>
 
-                    <div class="field">
-                        <button
-                            style="--type: var(--danger)"
-                            @click="cardData.attacks.splice(i, 1)"
-                        >
-                            Remove Attack
-                        </button>
+                        <div class="field">
+                            <label>Attack Description</label>
+                            <textarea
+                                v-model.lazy="a.desc"
+                                maxlength="100"
+                                :placeholder="`${
+                                    cardData.name || 'someone'
+                                } slaps the enemy dealing 10 damage!`"
+                                required
+                            />
+                        </div>
+
+                        <div class="field">
+                            <button
+                                style="--type: var(--danger)"
+                                @click="cardData.attacks.splice(i, 1)"
+                            >
+                                Remove Attack
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </details>
 
                 <div class="subsection">
                     <div class="button-group">
@@ -276,6 +278,7 @@ main section {
 
 details {
     overflow: hidden;
+
     background: var(--dark);
 }
 
@@ -361,10 +364,27 @@ h3 * {
     margin: 0 1rem;
 }
 
-.attack-form {
+.attack-form:not(details) {
     padding: 1rem;
-    border: var(--primary) 1.5px solid;
     margin: 1rem 0;
     border-radius: 10px;
+    border: var(--primary) 1.5px solid;
+}
+
+details.attack-form *:not(input):not(textarea) {
+    color: var(--light);
+}
+
+details.attack-form summary {
+    background: var(--secondary);
+    position: relative;
+}
+
+details.attack-form:first-of-type {
+    margin-top: 2rem;
+}
+
+details.attack-form:last-of-type {
+    margin-bottom: 2rem;
 }
 </style>

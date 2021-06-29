@@ -47,6 +47,7 @@ export default Vue.extend({
                 position: "top-end",
                 title: `${attackerName} played!`,
                 text: `${healText} ${attackText}`,
+                icon: "info",
             });
         });
     },
@@ -59,7 +60,10 @@ export default Vue.extend({
 }
 
 main {
-    align-items: center;
     overflow: hidden;
+    display: flex;
+
+    flex-direction: column;
+    align-items: center;
 }
 </style>

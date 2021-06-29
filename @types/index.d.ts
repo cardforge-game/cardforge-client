@@ -17,7 +17,6 @@ declare interface IPreviewCard {
     health: number;
     imgURL: string;
     attacks: IAttack[];
-    cardCost?: number;
 }
 
 declare interface ICard extends IPreviewCard {
