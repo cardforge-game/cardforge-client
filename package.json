@@ -1,5 +1,5 @@
 {
-  "name": "cardflow-client",
+  "name": "cardforge-client",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -11,6 +11,7 @@
     "lint": "npm run lint:js"
   },
   "dependencies": {
+    "colyseus.js": "^0.14.12",
     "core-js": "^3.15.1",
     "nuxt": "^2.15.7",
     "portal-vue": "^2.1.7"

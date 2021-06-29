@@ -118,6 +118,11 @@
     </main>
 </template>
 
+<script lang="ts">
+import Vue from "vue";
+export default Vue.extend({});
+</script>
+
 <style scoped>
 main {
     padding: 0 calc(calc(100vw - 2250px) / 2);
@@ -125,6 +130,7 @@ main {
 
 .hero.level {
     align-items: center;
+    background: var(--light-primary);
 }
 
 .hero .level-item {
@@ -140,15 +146,29 @@ main {
     max-width: 30vw;
 }
 
+.container {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.container:first-of-type {
+    border-radius: 20px 20px 0 0;
+    margin-top: 2rem;
+}
+
+.container:last-of-type {
+    border-radius: 0 0 20px 20px;
+    margin-bottom: 2rem;
+}
+
 .game-buttons {
     padding: 1rem;
 
     background: var(--dark);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 
     text-align: center;
-
-    border-radius: 20px;
 }
 
 .game-buttons > div {
@@ -157,12 +177,6 @@ main {
 
 .instructions {
     text-align: center;
-
-    margin-top: 2rem;
-
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-
-    border-radius: 20px;
 
     overflow: hidden;
 }

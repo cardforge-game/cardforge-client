@@ -7,7 +7,7 @@ export default {
 
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
-        title: "cardflow-client",
+        title: "CardFlow",
         htmlAttrs: {
             lang: "en",
         },
@@ -17,7 +17,12 @@ export default {
                 name: "viewport",
                 content: "width=device-width, initial-scale=1",
             },
-            { hid: "description", name: "description", content: "" },
+            {
+                hid: "description",
+                name: "description",
+                content:
+                    "An AI-powered card game where infinite creativity is in your hand.",
+            },
             { name: "format-detection", content: "telephone=no" },
         ],
         link: [
