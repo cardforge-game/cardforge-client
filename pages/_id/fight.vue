@@ -17,6 +17,8 @@ import Swal from "sweetalert2";
 import connection from "~/services/connection";
 
 export default Vue.extend({
+    middleware: "validateGamePhase",
+
     computed: {
         connection() {
             return connection;

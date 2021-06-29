@@ -14,6 +14,8 @@ import Vue from "vue";
 import connection from "~/services/connection";
 
 export default Vue.extend({
+    middleware: "validateGamePhase",
+
     computed: {
         results() {
             return connection.results;

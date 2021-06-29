@@ -3,20 +3,13 @@ import { Client as ColyseusClient, Room } from "colyseus.js";
 import Swal from "sweetalert2";
 
 import audio from "~/services/audio";
+import { formPathFromPhase } from "~/services/utilities";
 
 const ROOM_NAME = "standard";
 
 const client = new ColyseusClient(process.env.SERVER_ENDPOINT);
 
 let timerInterval = -1;
-
-const PHASE_ROUTES: Record<PhaseT, string> = {
-    WAITING: "",
-    CREATING: "create",
-    BUYING: "buy",
-    FIGHTING: "fight",
-    RESULTS: "results",
-};
 
 export default new Vue({
     data() {
@@ -86,7 +79,7 @@ export default new Vue({
             this.room?.onStateChange((newState) => {
                 if (newState.phase !== this.state.phase) {
                     this.$router.push(
-                        `/${this.room?.id}/${PHASE_ROUTES[newState.phase]}`
+                        formPathFromPhase(newState.phase, this.room?.id)
                     );
                 }
 

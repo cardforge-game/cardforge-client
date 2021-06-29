@@ -88,6 +88,8 @@ import connection from "~/services/connection";
 import audio from "~/services/audio";
 
 export default Vue.extend({
+    middleware: "validateGamePhase",
+
     data() {
         return {
             cards: [] as ICard[],
