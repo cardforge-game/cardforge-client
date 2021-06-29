@@ -71,8 +71,7 @@ export default new Vue({
 
         initEvents() {
             // Reset events:
-            this.room?.removeAllListeners();
-            this.eventRegistered = false;
+            this.resetGameState();
 
             // Listen for state changes and update in Vue:
             this.room?.onStateChange.once((state) => {
@@ -133,6 +132,14 @@ export default new Vue({
                     1000
                 );
             });
+        },
+        resetGameState() {
+            try {
+                this.room?.removeAllListeners();
+                this.room?.leave();
+                this.eventRegistered = false;
+                this.room = undefined;
+            } catch (error) {}
         },
     },
 });

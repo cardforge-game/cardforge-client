@@ -124,6 +124,9 @@ import Vue from "vue";
 import connection from "~/services/connection";
 
 export default Vue.extend({
+    mounted() {
+        connection.resetGameState();
+    },
     methods: {
         async initGame(action: "createGame" | "joinGame") {
             const res = await Swal.fire({
@@ -164,8 +167,12 @@ export default Vue.extend({
                     value.trim().length === 0 ? "Type in a code." : null,
             });
 
-            if (!(codePrompt.isDenied || codePrompt.isDismissed) && codePrompt.value) {
-                
+            connection.temp.username = username;
+
+            if (
+                !(codePrompt.isDenied || codePrompt.isDismissed) &&
+                codePrompt.value
+            ) {
                 this.$router.push(`/${codePrompt.value}`);
             }
         },

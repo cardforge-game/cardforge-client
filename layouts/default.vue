@@ -1,7 +1,7 @@
 <template>
     <div id="root">
         <AppHeader />
-
+        <ClockBar />
         <Nuxt />
     </div>
 </template>
