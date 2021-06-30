@@ -46,3 +46,24 @@ declare interface IAttackBroadcast {
     reciever: string;
     attack: IAttack;
 }
+
+declare module "imagekitio-vue";
+
+declare interface UploadResponse {
+    fileId: string;
+    name: string;
+    url: string;
+    thumbnailUrl: string;
+    height: number;
+    width: number;
+    size: number;
+    filePath: string;
+    tags?: string[];
+    isPrivateFile: boolean;
+    customCoordinates: string | null;
+    metadata?: string;
+}
+
+declare interface UploadResponseError {
+    message: string;
+}

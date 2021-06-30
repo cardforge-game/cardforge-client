@@ -66,11 +66,7 @@
 
                         <div class="field">
                             <label>Card Image URL</label>
-                            <input
-                                v-model="cardData.imgURL"
-                                placeholder="link.jpg"
-                                required
-                            />
+                            <IKUpload :onSuccess="uploadSuccess" :onError="uploadError" urlEndpoint="https://ik.imagekit.io/cardforge" publicKey="public_wWwwbVoz/HpvJnKkj5Trk2RUWBM=" :authenticationEndpoint="authURL" />
                         </div>
                     </div>
                 </div>
@@ -159,10 +155,16 @@
 import Vue from "vue";
 import Swal from "sweetalert2";
 import connection from "~/services/connection";
+import { IKUpload } from 'imagekitio-vue';
 
 export default Vue.extend({
     middleware: "validateGamePhase",
-
+    components:{
+        IKUpload
+    },
+    computed: {
+        authURL() {return "http://" + (process.env.SERVER_ENDPOINT as string).split("://")[1] + '/upload'}
+    },
     data() {
         return {
             cardData: {
@@ -235,6 +237,12 @@ export default Vue.extend({
         }
     },
     methods: {
+        uploadSuccess(res:UploadResponse){
+            this.cardData.imgURL = res.url
+        },
+        uploadError(err:UploadResponseError){
+            Swal.fire({icon:"error",text:err.message})
+        },
         publishCard() {
             connection.room?.send("submitCard", this.cardData);
         },
