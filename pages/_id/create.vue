@@ -65,8 +65,8 @@
                         </div>
 
                         <div class="field">
-                            <label>Card Image URL</label>
-                            <IKUpload :onSuccess="uploadSuccess" :onError="uploadError" urlEndpoint="https://ik.imagekit.io/cardforge" publicKey="public_wWwwbVoz/HpvJnKkj5Trk2RUWBM=" :authenticationEndpoint="authURL" />
+                            <label>Card Image</label>
+                            <UploadInput :required="true" :onSuccess="uploadSuccess" :onError="uploadError"/>
                         </div>
                     </div>
                 </div>
@@ -155,13 +155,9 @@
 import Vue from "vue";
 import Swal from "sweetalert2";
 import connection from "~/services/connection";
-import { IKUpload } from 'imagekitio-vue';
 
 export default Vue.extend({
     middleware: "validateGamePhase",
-    components:{
-        IKUpload
-    },
     computed: {
         authURL() {return "http://" + (process.env.SERVER_ENDPOINT as string).split("://")[1] + '/upload'}
     },
@@ -201,7 +197,7 @@ export default Vue.extend({
             connection.eventRegistered = true;
 
             connection.room.onMessage("previewCard", (card: IPreviewCard) => {
-                this.cardData = card;
+                this.cardData = {...this.cardData,...card};
             });
 
             connection.room.onMessage("cardAccepted", () => {
@@ -228,6 +224,7 @@ export default Vue.extend({
                 );
 
                 this.cardData = {
+                    fileId:"",
                     name: "",
                     health: 10,
                     imgURL: "",
@@ -238,9 +235,13 @@ export default Vue.extend({
     },
     methods: {
         uploadSuccess(res:UploadResponse){
+            console.log(res)
             this.cardData.imgURL = res.url
+            this.cardData.fileId = res.fileId
         },
         uploadError(err:UploadResponseError){
+            this.cardData.imgURL = ""
+            this.cardData.fileId = ""
             Swal.fire({icon:"error",text:err.message})
         },
         publishCard() {

@@ -19,6 +19,7 @@ const connection = new Vue({
             results: {} as Record<string, number>,
             unsynced: {
                 library: [] as ICard[],
+                uploadCredentials: null as Record<string,string> | null,
             },
             state: {
                 phase: "WAITING",
@@ -143,6 +144,11 @@ const connection = new Vue({
                     () => (this.time -= 1000),
                     1000
                 );
+            });
+
+            // Update the uploadCredentials for card uploads when received: 
+            this.room?.onMessage("requestUploadCredentials", (creds: Record<string, string>) => {
+                this.unsynced.uploadCredentials = creds;
             });
         },
         resetGameState() {

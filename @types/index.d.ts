@@ -13,6 +13,7 @@ declare interface IAttack {
 }
 
 declare interface IPreviewCard {
+    fileId:string;
     name: string;
     health: number;
     imgURL: string;
@@ -58,6 +59,7 @@ declare interface UploadResponse {
     width: number;
     size: number;
     filePath: string;
+    fileType: string;
     tags?: string[];
     isPrivateFile: boolean;
     customCoordinates: string | null;
@@ -66,4 +68,5 @@ declare interface UploadResponse {
 
 declare interface UploadResponseError {
     message: string;
+    fileId: string;
 }
