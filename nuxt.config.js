@@ -23,6 +23,22 @@ export default {
                 content:
                     "An AI-powered card game where infinite creativity is in your hand.",
             },
+            {
+                hid: "og:title",
+                name: "og:title",
+                content: "CardForge",
+            },
+            {
+                hid: "og:image",
+                property: "og:image",
+                content: "/logo.png",
+            },
+            {
+                hid: "og:description",
+                property: "og:description",
+                content:
+                    "An online party card battling game where the players make the cards!",
+            },
             { name: "format-detection", content: "telephone=no" },
         ],
         link: [
