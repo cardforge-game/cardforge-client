@@ -2,8 +2,7 @@
     <Card
         v-if="player && player.activeCard"
         :card="activeCard"
-        :class="isActivePlayer ? 'is-active-player' : ''"
-        :custom-style="isEnemy ? 'border-color: var(--danger);' : ''"
+        :class="{'is-active-card':isActiveCard,'thinking':isNotCurrentPlayer,'is-current-player-card':isCurrentPlayer,'is-enemy':isEnemy}"
         :size="9"
         :graphic-only="true"
         @click="onClick"
@@ -26,8 +25,14 @@ export default Vue.extend({
         },
     },
     computed: {
-        isActivePlayer(): boolean {
+        isActiveCard(): boolean {
             return connection.state.activePlayerID === this.player?.id;
+        },
+        isCurrentPlayer(): boolean {
+            return this.isActiveCard && (connection.currentPlayer?.id === this.player?.id)
+        },
+        isNotCurrentPlayer(): boolean {
+            return (this.isActiveCard == true && !this.isCurrentPlayer)
         },
         activeCard(): ICard | undefined {
             return this.player.activeCard;
@@ -68,9 +73,44 @@ export default Vue.extend({
     }
 }
 
-.is-active-player {
+@keyframes border-pulse {
+    25% {
+        border-color: var(--success);
+        border-left-color: #2c3e50
+    }
+
+    50% {
+        border-color: var(--success);
+        border-top-color: #2c3e50
+    }
+
+    75% {
+        border-color: var(--success);
+        border-right-color: #2c3e50
+    }
+
+    100% {
+        border-color: var(--success);
+        border-bottom-color: #2c3e50
+    }
+
+}
+
+.thinking{
+    animation: border-pulse 5.5s infinite;
+}
+
+.is-enemy{
+    border-color: var(--danger);
+    border-width: 5px;
+}
+
+.is-active-card {
     border: 5px solid var(--success);
-    animation: pulse 1.5s infinite;
+}
+
+.is-current-player-card {
+    /*animation: pulse 2.5s infinite;*/
 }
 
 .no-active-username {

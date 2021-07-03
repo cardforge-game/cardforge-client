@@ -291,7 +291,7 @@ header {
     --rotate: 0deg;
     transform: rotate(var(--rotate));
 
-    transition: border-color 0.25s ease-in-out;
+    transition: all 0.5s ease-in-out;
 }
 
 hr {

@@ -95,20 +95,9 @@ export default Vue.extend({
 
             if (this.turnInitiated && !clickedSelf) {
                 this.turnInitiated = false;
-                Swal.fire({
-                    title: `You're attacking ${player.name}.`,
-                    text: `Now choose an attack on your active card.`,
-                    icon: "info",
-                });
                 this.attackTarget = player.id || null;
                 this.showCardDialog = true;
             } else if (clickedSelf && selfTurn) {
-                Swal.fire({
-                    title: "You're starting your turn.",
-                    text: `Click on an opponent to attack them`,
-                    icon: "info",
-                    toast: true,
-                });
                 this.turnInitiated = true;
             }
         },
