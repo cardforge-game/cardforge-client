@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import audio from "~/services/audio";
 import { formPathFromPhase } from "~/services/utilities";
 
+
 const ROOM_NAME = "standard";
 
 const client = new ColyseusClient(process.env.SERVER_ENDPOINT);
@@ -16,9 +17,10 @@ const connection = new Vue({
         return {
             room: undefined as Room<IRoom> | undefined,
             eventRegistered: false,
-            results: {} as Record<string, number>,
             unsynced: {
                 library: [] as ICard[],
+                leaderboard: {} as Record<string, number>,
+                pointMetrics: []
             },
             state: {
                 phase: "WAITING",
@@ -129,9 +131,11 @@ const connection = new Vue({
 
             // Listen for results:
             this.room?.onMessage(
-                "results",
-                (results: Record<string, number>) => {
-                    this.results = results;
+                "leaderboardUpdate",
+                (update) => {
+                    console.log(update)
+                    this.unsynced.leaderboard = update.leaderboard;
+                    this.unsynced.pointMetrics = update.pointMetrics;
                 }
             );
 
@@ -144,6 +148,12 @@ const connection = new Vue({
                     1000
                 );
             });
+            
+            //Game Over Alert:
+            this.room?.onMessage("gameOver",(r)=>{
+                const winnerName = Object.entries(r).sort((a,b)=> (b[1] as number) - (a[1] as number)).map(([k,v])=>k)[0]
+                Swal.fire({title: "Game Over!",text:`The winner is ${winnerName}`, timer:10000, icon:"success" })
+            })
         },
         resetGameState() {
             try {

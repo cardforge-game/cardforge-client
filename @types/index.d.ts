@@ -46,3 +46,6 @@ declare interface IAttackBroadcast {
     reciever: string;
     attack: IAttack;
 }
+
+declare module "vue-chartkick"
+declare module "chart.js"
