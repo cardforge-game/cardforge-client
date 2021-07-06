@@ -48,7 +48,6 @@ import connection from "~/services/connection";
 export default Vue.extend({
     data() {
         return {
-            turnInitiated: false,
             showCardDialog: false,
             attackTarget: null as string | null,
         };
@@ -93,12 +92,9 @@ export default Vue.extend({
                 connection.currentPlayer?.id ===
                 connection.state.activePlayerID;
 
-            if (this.turnInitiated && !clickedSelf) {
-                this.turnInitiated = false;
+            if (selfTurn && !clickedSelf) {
                 this.attackTarget = player.id || null;
                 this.showCardDialog = true;
-            } else if (clickedSelf && selfTurn) {
-                this.turnInitiated = true;
             }
         },
         doAttack(_attack: IAttack, attackIndex: number) {
@@ -135,6 +131,7 @@ export default Vue.extend({
 
 .card-dialog-perspective {
     position: fixed;
+    right: 100px;
 }
 
 .row {

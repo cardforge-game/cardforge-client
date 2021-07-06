@@ -4,6 +4,7 @@
         :style="cardStyles"
         @click="handleClick"
         @mouseenter="handleMouseEnter"
+        @mouseleave="handleMouseLeave"
     >
         <header>
             <h1
@@ -131,6 +132,9 @@ export default Vue.extend({
         },
         handleMouseEnter() {
             this.$emit("mouseenter");
+        },
+        handleMouseLeave() {
+            this.$emit("mouseleave");
         },
         showAttackDetails(i: number) {
             Swal.fire(
@@ -290,8 +294,7 @@ header {
 
     --rotate: 0deg;
     transform: rotate(var(--rotate));
-
-    transition: all 0.5s ease-in-out;
+    transition: border 0.5s ease-in-out, transform 0.25s ease-in-out;
 }
 
 hr {

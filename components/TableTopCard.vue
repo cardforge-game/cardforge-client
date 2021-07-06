@@ -2,7 +2,7 @@
     <Card
         v-if="player && player.activeCard"
         :card="activeCard"
-        :class="{'is-active-card':isActiveCard,'thinking':isNotCurrentPlayer,'is-current-player-card':isCurrentPlayer,'is-enemy':isEnemy}"
+        :class="{'is-active-card':isActiveCard,'thinking':isNotCurrentPlayer,'is-enemy':isEnemy}"
         :size="9"
         :graphic-only="true"
         @click="onClick"
@@ -104,13 +104,12 @@ export default Vue.extend({
     border-color: var(--danger);
     border-width: 5px;
 }
+.is-enemy:hover{
+    transform: scale(1.5)
+}
 
 .is-active-card {
     border: 5px solid var(--success);
-}
-
-.is-current-player-card {
-    /*animation: pulse 2.5s infinite;*/
 }
 
 .no-active-username {
