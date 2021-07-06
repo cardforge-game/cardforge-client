@@ -15,7 +15,7 @@ const audio = {
         volume: 0.9,
     }),
     changeCard: new Howl({
-        src: "./sounds/changeCard.ogg",
+        src: "/sounds/changeCard.ogg",
     }),
     placeCard: new Howl({
         src: "/sounds/placeCard.ogg",
@@ -40,5 +40,5 @@ const audio = {
         },
     } as ISoundState,
 };
-
+(window as any).ss = audio
 export default audio;
