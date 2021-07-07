@@ -15,6 +15,7 @@
 import Vue from "vue";
 import Swal from "sweetalert2";
 import connection from "~/services/connection";
+import audio from "~/services/audio";
 
 export default Vue.extend({
     middleware: "validateGamePhase",
@@ -29,26 +30,42 @@ export default Vue.extend({
     },
     mounted() {
         connection.room?.onMessage("attacked", (d: IAttackBroadcast) => {
-            const attackerName = connection.state.players?.[d.attacker]?.name;
-            const targetName = connection.state.players?.[d.reciever]?.name;
+            //Incrementally play attack effects
 
-            const healText =
-                typeof d.attack.heal === "number" && d.attack.heal > 0
-                    ? `${attackerName} healed for ${d.attack.heal}.`
-                    : "";
+            //Base attack info at 0
+            connection.unsynced.lastAttack = {
+                ...d,
+                attack:{
+                    name:d.attack.name,
+                    desc:d.attack.desc,
+                    damage:0,
+                    heal:0,
+                }
+            }
+            //Determine what to animate
+            const animationQueue = Object.entries(d.attack).filter(([k,v])=> typeof v === "number" && v > 0).map(([k,v])=>k) as unknown as (keyof IAttack)[]
+            //Play effects 
+            const effectsPlayer:any = setInterval(function(){
+                //Exit if all animations have finished
+                if (animationQueue.length === 0 || !connection.unsynced.lastAttack?.attack) return clearInterval(effectsPlayer)
+                //Get key of effect in audio/attack
+                const effectType:keyof IAttack = animationQueue.splice(0,1)[0];
+                //Play the audio
+                (audio as any)[effectType].play();
+                //Set the effect
+                if(connection.unsynced.lastAttack){
+                    (connection.unsynced.lastAttack.attack[effectType] as any)  = (d.attack[effectType] as any)
+                }
 
-            const attackText =
-                typeof d.attack.damage === "number" && d.attack.damage > 0
-                    ? `${targetName} took ${d.attack.damage} damage!`
-                    : "";
+         
+             
+            },1000)
 
-            Swal.fire({
-                toast: true,
-                position: "top-end",
-                title: `${attackerName} played!`,
-                text: `${healText} ${attackText}`,
-                icon: "info",
-            });
+            setTimeout(()=>{
+                clearInterval(effectsPlayer)
+                connection.unsynced.lastAttack = undefined
+            },4000)
+
         });
     },
 });

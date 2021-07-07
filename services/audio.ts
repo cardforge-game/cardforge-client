@@ -14,6 +14,10 @@ const audio = {
         src: "/sounds/damage.wav",
         volume: 0.9,
     }),
+    heal: new Howl({
+        src: "/sounds/heal.webm",
+        volume: 1.1,
+    }),
     changeCard: new Howl({
         src: "/sounds/changeCard.ogg",
     }),

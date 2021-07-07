@@ -1,10 +1,14 @@
 <template>
     <Card
         v-if="player && player.activeCard"
+        :ref="player.name"
         :card="activeCard"
         :class="{'is-active-card':isActiveCard,'thinking':isNotCurrentPlayer,'is-enemy':isEnemy}"
         :size="9"
         :graphic-only="true"
+        :damaged="isDamaged"
+        :healed="isHealed"
+        :indicatorText="indicatorText"
         @click="onClick"
     />
     <p v-else-if="player" class="no-active-username">
@@ -25,6 +29,29 @@ export default Vue.extend({
         },
     },
     computed: {
+        isDamaged(): boolean{
+            return connection.unsynced.lastAttack?.reciever === this.player?.id && (connection.unsynced.lastAttack?.attack.damage || -1) > 0
+        },
+        isHealed(): boolean{
+            return connection.unsynced.lastAttack?.attacker === this.player?.id && (connection.unsynced.lastAttack?.attack.heal || -1) > 0
+        },
+        indicatorText(): string|null{
+            //Find the value and prefix of the indicatorText
+            const effect = [{
+                prefix: "-",
+                condition: this.isDamaged,
+                value: connection.unsynced.lastAttack?.attack.damage
+            }, {
+                prefix: "+",
+                condition: this.isHealed,
+                value: connection.unsynced.lastAttack?.attack.heal
+            }].find(e => e.condition)
+
+            if(!effect) return null;
+
+            return `${effect.prefix}${effect.value}`
+
+        },
         isActiveCard(): boolean {
             return connection.state.activePlayerID === this.player?.id;
         },

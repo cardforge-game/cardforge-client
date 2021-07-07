@@ -1,10 +1,7 @@
 import Vue from "vue";
 import { Client as ColyseusClient, Room } from "colyseus.js";
 import Swal from "sweetalert2";
-
-import audio from "~/services/audio";
 import { formPathFromPhase } from "~/services/utilities";
-
 
 const ROOM_NAME = "standard";
 
@@ -20,7 +17,8 @@ const connection = new Vue({
             unsynced: {
                 library: [] as ICard[],
                 leaderboard: {} as Record<string, number>,
-                pointMetrics: []
+                pointMetrics: [],
+                lastAttack: undefined as IAttackBroadcast|undefined
             },
             state: {
                 phase: "WAITING",
@@ -120,20 +118,10 @@ const connection = new Vue({
                 }
             });
 
-            // Play sound when attacked:
-            this.room?.onMessage(
-                "attacked",
-                (_attackData: IAttackBroadcast) => {
-                    audio.damage.play();
-                    // Effects / Animations
-                }
-            );
-
             // Listen for results:
             this.room?.onMessage(
                 "leaderboardUpdate",
                 (update) => {
-                    console.log(update)
                     this.unsynced.leaderboard = update.leaderboard;
                     this.unsynced.pointMetrics = update.pointMetrics;
                 }

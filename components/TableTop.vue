@@ -41,8 +41,6 @@
 
 <script lang="ts">
 import Vue from "vue";
-
-import Swal from "sweetalert2";
 import connection from "~/services/connection";
 
 export default Vue.extend({
