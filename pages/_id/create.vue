@@ -9,6 +9,7 @@
             <br />
 
             <details open class="card-side">
+                <p class="h6 cost" v-if="cardData.cardCost">Other players can by this card at: <b>${{ cardData.cardCost }}</b></p>
                 <summary class="selectable unhighlightable bold h4">
                     Card Preview
                 </summary>
@@ -47,6 +48,7 @@
                         <div class="field">
                             <label>Card Name</label>
                             <input
+                                :class="{attention:(cardData.name.length <= 0)}"
                                 v-model="cardData.name"
                                 placeholder="Lord of Darkness"
                                 maxlength="24"
@@ -60,6 +62,7 @@
                                 v-model.number="cardData.health"
                                 type="number"
                                 placeholder="10"
+                                min="1"
                                 required
                             />
                         </div>
@@ -78,7 +81,7 @@
                 <h3>
                     Card Attacks
                     <button
-                        v-if="cardData.attacks.length < 3"
+                        v-if="cardData.attacks.length < 3 && cardData.name"
                         style="--type: var(--success)"
                         @click="
                             cardData.attacks.push({
@@ -87,13 +90,17 @@
                             })
                         "
                     >
-                        Add Attack
+                        Add Attack ⚔️
                     </button>
                 </h3>
 
-                <p v-if="cardData.attacks.length === 0" class="field">
+                <p v-if="cardData.attacks.length === 0 && cardData.name" class="field">
                     You have no attacks setup! Click "Add Attack"
                 </p>
+                <p v-else-if="!cardData.name" class="field">
+                    Start creating a card by typing a name!
+                </p>
+                <div v-if="cardData.name">
                 <details
                     v-for="(a, i) in cardData.attacks"
                     :key="`attackCardCreation-${i}`"
@@ -101,7 +108,6 @@
                     class="attack-form"
                 >
                     <summary class="h4 bold section">{{ a.name }}</summary>
-
                     <div class="section">
                         <div class="field">
                             <label>Attack Name</label>
@@ -111,6 +117,7 @@
                                 maxlength="20"
                                 required
                             />
+                            <button type="button" class="inline-block" @click="setExampleAttack(i)">🎲</button>
                         </div>
 
                         <div class="field">
@@ -135,8 +142,9 @@
                         </div>
                     </div>
                 </details>
+                </div>
 
-                <div class="subsection">
+                <div class="subsection" v-if="cardData.name">
                     <div class="button-group">
                         <button
                             type="button"
@@ -159,6 +167,7 @@
 import Vue from "vue";
 import Swal from "sweetalert2";
 import connection from "~/services/connection";
+import getExampleAttack from "~/services/exampleAttacks";
 
 export default Vue.extend({
     middleware: "validateGamePhase",
@@ -166,18 +175,11 @@ export default Vue.extend({
     data() {
         return {
             cardData: {
-                name: "Test Card",
+                name: "",
                 health: 10,
-                imgURL: "https://cdn.discordapp.com/icons/838576957909237791/4eb40941d1b57d2ce52e58182792e0e7.webp?size=256",
+                imgURL: "",
                 attacks: [
-                    {
-                        name: "Tail Whip",
-                        desc: "Tail smacks the enemy dealing 7 damage",
-                    },
-                    {
-                        name: "Heal Smack",
-                        desc: "Smack the enemy to deal 5 damage. Test Card heals 2 health in the process.",
-                    },
+                
                 ],
             } as IPreviewCard,
             acceptedCards: 0,
@@ -251,6 +253,9 @@ export default Vue.extend({
                 JSON.stringify(this.currentCache)
             );
         },
+        setExampleAttack(i: number){
+            Vue.set(this.cardData.attacks,i,getExampleAttack(this.cardData.name,connection.state.resultsShown))
+        }
     },
 });
 </script>
@@ -386,5 +391,25 @@ details.attack-form:first-of-type {
 
 details.attack-form:last-of-type {
     margin-bottom: 2rem;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.cost{
+    color: var(--light);
+    margin-top: 0.5rem;
+}
+
+.cost b{
+    background-color: var(--success);
+    color: var(--light);
+    padding: 0px 0.5rem;
+}
+
+.attention{
+    border:solid 3px var(--secondary);
+    border-radius: 10px;
 }
 </style>

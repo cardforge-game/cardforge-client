@@ -51,8 +51,8 @@
                             class="attack-desc"
                         >
                             {{
-                                a.desc.length > 30
-                                    ? `${a.desc.substring(0, 90)}...`
+                                a.desc.length > 100
+                                    ? `${a.desc.substring(0, 100)}...`
                                     : a.desc
                             }}
                         </small>
@@ -228,7 +228,7 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     margin-right: 1rem;
-    height: 100%;
+    height: 175%;
     justify-content: space-evenly;
 }
 
