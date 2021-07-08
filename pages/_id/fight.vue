@@ -1,10 +1,19 @@
 <template>
     <main>
         <MoneyIndicator />
-
-        <div v-if="activePlayer" class="info-bar">
-            <b class="h4">It's {{ activePlayer.name }}'s turn!</b>
-        </div>
+        <transition name="bounce">
+            <div v-if="activePlayer" class="info-bar">
+                <b class="h4">  {{ activePlayer.name}}&nbsp;</b> <span>is thinking &nbsp; &nbsp;</span>
+                <div class="sk-chase">
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                    <div class="sk-chase-dot"></div>
+                </div>
+            </div>
+        </transition>
 
         <TableTop />
         <PlayerHand />
@@ -74,6 +83,28 @@ export default Vue.extend({
 <style scoped>
 .info-bar {
     padding: 1rem;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    left:50%;
+    transform: translateX(-50%);
+    z-index:5;
+    background: var(--dark);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+
+}
+.info-bar .h4{
+    color: var(--light);
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    vertical-align:middle;
+}
+.info-bar span{
+    color: var(--light);;
+    font-size: 1rem;
+    vertical-align:middle;
 }
 
 main {
@@ -82,5 +113,79 @@ main {
 
     flex-direction: column;
     align-items: center;
+}
+
+/* Current Turn animation */
+.bounce-enter-active {
+  animation: bounce-in .5s;
+}
+.bounce-leave-active {
+  animation: bounce-in .5s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: translateX(-50%) scale(0);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.3);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}
+.sk-chase {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  display: inline-block;
+  animation: sk-chase 2.5s infinite linear both;
+}
+
+.sk-chase-dot {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0; 
+  animation: sk-chase-dot 2.0s infinite ease-in-out both; 
+}
+
+.sk-chase-dot:before {
+  content: '';
+  display: block;
+  width: 25%;
+  height: 25%;
+  background-color: #fff;
+  border-radius: 100%;
+  animation: sk-chase-dot-before 2.0s infinite ease-in-out both; 
+}
+
+.sk-chase-dot:nth-child(1) { animation-delay: -1.1s; }
+.sk-chase-dot:nth-child(2) { animation-delay: -1.0s; }
+.sk-chase-dot:nth-child(3) { animation-delay: -0.9s; }
+.sk-chase-dot:nth-child(4) { animation-delay: -0.8s; }
+.sk-chase-dot:nth-child(5) { animation-delay: -0.7s; }
+.sk-chase-dot:nth-child(6) { animation-delay: -0.6s; }
+.sk-chase-dot:nth-child(1):before { animation-delay: -1.1s; }
+.sk-chase-dot:nth-child(2):before { animation-delay: -1.0s; }
+.sk-chase-dot:nth-child(3):before { animation-delay: -0.9s; }
+.sk-chase-dot:nth-child(4):before { animation-delay: -0.8s; }
+.sk-chase-dot:nth-child(5):before { animation-delay: -0.7s; }
+.sk-chase-dot:nth-child(6):before { animation-delay: -0.6s; }
+
+@keyframes sk-chase {
+  100% { transform: rotate(360deg); } 
+}
+
+@keyframes sk-chase-dot {
+  80%, 100% { transform: rotate(360deg); } 
+}
+
+@keyframes sk-chase-dot-before {
+  50% {
+    transform: scale(0.4); 
+  } 100%, 0% {
+    transform: scale(1.0); 
+  } 
 }
 </style>
