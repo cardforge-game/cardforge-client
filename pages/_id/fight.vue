@@ -2,7 +2,7 @@
     <main>
         <MoneyIndicator />
         <transition name="bounce">
-            <div v-if="activePlayer" class="info-bar">
+            <div v-if="activePlayer" class="info-bar" @animationstart="newTurnSound">
                 <b class="h4">  {{ activePlayer.name}}&nbsp;</b> <span>is thinking &nbsp; &nbsp;</span>
                 <div class="sk-chase">
                     <div class="sk-chase-dot"></div>
@@ -22,13 +22,16 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Swal from "sweetalert2";
 import connection from "~/services/connection";
 import audio from "~/services/audio";
 
 export default Vue.extend({
     middleware: "validateGamePhase",
-
+    methods:{
+      newTurnSound(){ 
+        if(this.activePlayer) audio.turn.play();
+      }
+    },
     computed: {
         connection() {
             return connection;

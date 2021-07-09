@@ -24,6 +24,10 @@ const audio = {
     placeCard: new Howl({
         src: "/sounds/placeCard.ogg",
     }),
+    turn: new Howl({
+        src: "/sounds/turn.webm",
+        volume: 0.3,
+    }),
     hover: {
         0: new Howl({
             src: "/sounds/hover0.ogg",
