@@ -2,119 +2,123 @@
     <main>
         <portal to="header">
             <div class="button-group">
-                <button
-                    style="--type: var(--success)"
-                    @click="initGame('createGame')"
-                >
+                <button style="--type: var(--success)" @click="initGame('createGame')">
                     Start Game
                 </button>
-                <button
-                    style="--type: var(--primary)"
-                    @click="initGame('joinGame')"
-                >
+                <button style="--type: var(--primary)" @click="initGame('joinGame')">
                     Join Game
                 </button>
             </div>
         </portal>
+        <div class="grid banner">
+            <section class="text-section">
+                <h1 class="text-xl">Card<br>Forge</h1>
+                <h2 class="h2">The imagination is in your hand</h2>
+            </section>
+            <section>
+                <Card class="lg-card" :showDetails="true" :card="exampleCards[0]" :size="20" />
+                <Card class="sm-card" :card="exampleCards[1]" :showDetails="false" :size="15" />
+            </section>
+        </div>
+        <div class="content">
+            <p class="h6">CardForge is an online party game where the players face of to <b class="h5">build</b>, <b
+                    class="h5">exchange</b>, and <b class="h5">battle</b> their own custom
+                cards!</p>
+            <br><br>
+            <p class="h6 bold"> Here's a quick run down of the game</p>
+        </div>
+        <div class="features">
+            <div class="feature content">
+                <h1 class="bold h1">Build Cards</h1>
+                <br><br>
+                <section class="grid flex-center">
+                    <span>
+                        <p class="h5">Use our AI-powered card designer to forge cards <br> <b class="h5">simply by
+                                typing!</b><br><br> Watch <b class="h5"> anything you want </b> come to life</p>
+                    </span>
+                    <span>
+                        <div class="exampleinput">
+                            <span>Sir woofus slaps the enemy to remove 10 health!</span>
+                        </div>
+                        <p class="hint">Becomes</p>
+                        <Card :card="exampleCards[2]" :showDetails="true" />
+                    </span>
+                </section>
 
-        <section class="container level hero">
-            <div class="level-item">
-                <img src="~/assets/images/logo.png" />
-                <p class="lead bold">
-                    An AI-powered card game where infinite creativity is in your
-                    hand.
-                </p>
             </div>
-            <div class="level-item">
-                <img src="~/assets/images/cards.svg" />
+            <br>
+            <div class="feature content">
+                <h1 class="bold h1">Exchange Cards</h1>
+                <br><br>
+                <section class="grid flex-center">
+                    <span>
+                        <div class="deck">
+                            <h1 class="shop">Card Shop 🛒</h1>
+
+                            <div v-for="(c, i) in exampleCards.slice(-3)" :key="`card-${i}`" class="card-item">
+                                <div class="card-overhead">
+                                </div>
+                                <Card :class="{'hide-sm':(i!==1)}" :key="`card-${i}`" :card="c" :size="13"
+                                    :shadow="false" />
+                            </div>
+
+                        </div>
+                    </span>
+                    <span>
+                        <p class="h5">
+                            Explore cards created by <b class="h5">other players</b> and purchase ones that stand out to
+                            you
+                            <br><br>
+                            Cards that are more powerful will <b class="h5">cost more</b>
+                        </p>
+                    </span>
+                </section>
+
             </div>
-        </section>
+            <div class="feature content">
+                <h1 class="bold h1">Battle Cards!</h1>
+                <br><br>
+                <section class="grid flex-center">
+                    <span>
+                        <div class="deck">
+                            <Card :key="`card-${i}`" :showDetails="true" :card="exampleCards[2]" :size="13"
+                                :shadow="false" :is-interactive="true" />
 
-        <section class="container game-buttons">
-            <div class="hero-section-2-small" style="padding-bottom: 0px">
-                <h5 style="color: white">
-                    Start a game by creating a room, or enter someone else's
-                    room with their join code!
-                </h5>
+                        </div>
+                    </span>
+                    <span>
+                        <p class="h5">
+                            Fight other players with cards in a <b class="h5">turn-based arena</b>
+                            <br><br>
+                            All cards and attacks are made up<b class="h5"> on the fly by the players</b>
+                        </p>
+                    </span>
+                </section>
+
             </div>
-            <div class="hero-section-2-small">
-                <div class="button-group">
-                    <button
-                        class="h5"
-                        style="--type: var(--success)"
-                        @click="initGame('createGame')"
-                    >
-                        Start Game
-                    </button>
-                    <button
-                        class="h5"
-                        style="--type: var(--primary)"
-                        @click="initGame('joinGame')"
-                    >
-                        Join Game
-                    </button>
-                </div>
+            <div class="feature content">
+                <h1 class="bold h1">Connect with us</h1>
+                <br><br>
+                <section class="grid flex-center">
+                    <span>
+                        <p class="h5">
+                            The game is currently still in a <b class="h5">preview state</b> and is currently under
+                            heavy development
+                            <br><br>
+                            Drop by our discord to follow the latest updates and find other players
+                        </p>
+                    </span>
+                    <span>
+                        <div class="deck">
+                            <iframe src="https://discord.com/widget?id=862843702497378345&theme=dark" width="350"
+                                height="500" allowtransparency="true" frameborder="0"
+                                sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                        </div>
+                    </span>
+                </section>
+
             </div>
-        </section>
-
-        <section class="container instructions">
-            <h1 class="bold">How to Play</h1>
-
-            <div class="text-grid">
-                <h4>Joining a Game Room</h4>
-
-                <div class="content">
-                    To create a game room, you can click the
-                    <a
-                        class="bold selectable"
-                        style="color: var(--primary)"
-                        @click="initGame('createGame')"
-                    >
-                        Start Game
-                    </a>
-                    button above. If someone else has started a game, you can
-                    join them using their code by clicking the
-                    <a
-                        class="bold selectable"
-                        style="color: var(--success)"
-                        @click="initGame('joinGame')"
-                    >
-                        Join Game
-                    </a>
-                    button above.
-                </div>
-
-                <h4>Phase 1: Creation</h4>
-
-                <div class="content">
-                    During the creation phase, you can design and build your own
-                    cards. A card has a custom image, health value, and attacks.
-                    Simply describe each attack, and our artifical intelligence
-                    system will create a corresponding card, almost magically.
-                </div>
-
-                <h4>Phase 2: Deck Building</h4>
-
-                <div class="content">
-                    Build your game deck using the cards your opponents have
-                    created. This is your inventory of cards. From your
-                    inventory, you can choose up to 8 cards to bring into
-                    battle. This is your deck. Choose a deck wisely, as you
-                    cannot change it during a round!
-                </div>
-
-                <h4>Phase 3: Fighting</h4>
-
-                <div class="content">
-                    During the fight, choose an active card to play with. Using
-                    this card, you can deal damage to other cards and heal
-                    yourself during your turn. Your goal is to knock out as many
-                    players as you can while keeping you characters at a high
-                    health! When you are knocked out, you may substitute in
-                    another card from your deck.
-                </div>
-            </div>
-        </section>
+        </div>
     </main>
 </template>
 
@@ -124,6 +128,17 @@ import Vue from "vue";
 import connection from "~/services/connection";
 
 export default Vue.extend({
+    data(){
+        return{
+            exampleCards:[
+                JSON.parse(`{ "name": "Sir Woofus", "health": 50, "imgURL": "${require(`~/assets/images/woof.webp`)}", "attacks": [ { "name": "Soaring Chomp", "desc": "Sir Woofus bites on the foe and launches them into the air dealing 20 damage", "damage": 20 }, { "name": "Pant", "desc": "Sir Woofus lies down on the ground to rest and restore 12 health", "heal": 12 } ] }`),
+                JSON.parse(`{ "name": "Vince", "health": 20, "imgURL": "${require(`~/assets/images/vince.webp`)}", "attacks": [ { "name": "Fists of Fury", "desc": "Vince rapidly punches the enemy to deal 50 damage", "damage": 50 } ] }`),
+                JSON.parse(`{ "name": "Sir Woofus", "health": 50, "imgURL": "${require(`~/assets/images/woof.webp`)}", "attacks": [ { "name": "Slap!", "desc": "Sir woofus slaps the enemy to remove 10 health", "damage":10 }] }`),
+                JSON.parse(`{ "name": "Kiana the Silent", "health": 20, "imgURL": "${require(`~/assets/images/hood.webp`)}", "attacks": [ { "name": "Nimble Strike","damage":30}] }`),
+                JSON.parse(`{ "name": "Literal Lemon", "health": 5, "imgURL": "${require(`~/assets/images/lem.webp`)}", "attacks": [ { "name": "Lemon Juice Spray","damage":100}] }`),
+            ]
+        }
+    },
     mounted() {
         connection.resetGameState();
     },
@@ -182,91 +197,119 @@ export default Vue.extend({
 
 <style scoped>
 main {
-    padding: 0 calc(calc(100vw - 2250px) / 2);
+    margin-top: 10vh;
+    padding: 0 2rem;
 }
 
-.hero.level {
-    align-items: center;
-    background: var(--light-primary);
+.shop{
+    transform: rotate(-90deg);
 }
 
-.hero .level-item {
-    margin: 1rem;
-}
-
-.hero .level-item:first-of-type {
-    text-align: right;
-}
-
-.hero img {
-    max-height: 50vh;
-    max-width: 30vw;
-}
-
-.container {
-    margin-top: 0;
-    margin-bottom: 0;
-
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-}
-
-.container:first-of-type {
-    border-radius: 20px 20px 0 0;
-    margin-top: 2rem;
-}
-
-.container:last-of-type {
-    border-radius: 0 0 20px 20px;
-    margin-bottom: 2rem;
-}
-
-.game-buttons {
-    padding: 1rem;
-
-    background: var(--dark);
-
+.content{
     text-align: center;
+    padding:5% 15%;
 }
 
-.game-buttons > div {
-    margin: 1rem 0;
+.deck{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 
-.instructions {
-    text-align: center;
-
-    overflow: hidden;
-}
-
-.instructions h1 {
-    padding: 1rem;
-
-    background: var(--dark-primary);
-
-    color: var(--light);
-}
-
-.instructions .text-grid {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-}
-
-.instructions .text-grid > * {
-    padding: 1rem;
-}
-
-.instructions .text-grid h4 {
-    background: var(--primary);
-
-    color: var(--light);
-    font-weight: bold;
-    text-align: right;
-}
-
-.instructions .text-grid .content {
-    background: var(--light-primary);
-
+.banner{
+    height:90vh;
     text-align: left;
 }
+.feature{
+    margin: 2rem 0;
+}
+.grid{
+    display:grid;
+    column-gap: 20px;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+.text-xl{
+    font-size:9rem;
+    font-weight:800;
+    text-transform: uppercase;
+    line-height:0.9;
+}
+
+
+.flex-center{
+    display:flex;
+    justify-content:space-evenly;
+    align-items:center;
+}
+
+.lg-card{
+    transform: scale(1.3) translateY(100px);
+}
+.sm-card{
+    transform: translate(300px,-120px);
+}
+
+.exampleinput{
+    padding: 0.65rem 0.65rem;
+    background-color: var(--light);
+}
+
+.hint{
+    font-style: italic;
+}
+.features{
+    display:flex;
+    justify-content: space-between;
+    flex-direction: column;
+    height:150vh;
+}
+@media only screen and (max-width: 768px) {
+    .text-xl {
+        font-size: 4rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .sm-card {
+        transform: translate(0px, -100px);
+    }
+
+    .hide-sm{
+        display: none;
+    }
+
+    .lg-card {
+        display: none;
+    }
+
+    .banner {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+        row-gap: 50px;
+    }
+
+    .content {
+        padding: 5% 5%;
+    }
+    .deck{
+        flex-direction: column;
+    }
+    .shop{
+        transform: rotate(0deg);
+        font-size: 2rem;
+    }
+}
+
+.banner .card{
+    position:relative;
+    z-index: -1;
+}
+
+
+.banner section{
+    margin: auto auto;
+}
+
 </style>

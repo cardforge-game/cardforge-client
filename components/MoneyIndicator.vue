@@ -3,7 +3,7 @@
         <b>{{ currentPlayer.name }}</b>
 
         <span v-if="currentPlayer">
-            <b>${{ currentPlayer.money }}</b>
+            <b class="text-light">${{ currentPlayer.money }}</b>
         </span>
     </portal>
 </template>
@@ -15,7 +15,7 @@ import connection from "~/services/connection";
 export default Vue.extend({
     computed: {
         currentPlayer() {
-            return connection.currentPlayer;
+            return connection.currentPlayer || {name:""};
         },
     },
 });
@@ -30,7 +30,10 @@ span {
 }
 
 b {
+    color: var(--dark);
+}
+
+.text-light{
     color: var(--light);
-    text-shadow: 1px 1px 5px black;
 }
 </style>

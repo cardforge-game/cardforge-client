@@ -29,9 +29,12 @@ export default Vue.extend({
 
 <style scoped>
 .clock-bar {
-    background: var(--darker);
-    color: var(--light);
+    background: transparent;
+    color: var(--dark);
     padding: 1rem;
     text-align: center;
+    font-family:Arial, Helvetica, sans-serif;
+    position: relative;
+    z-index: 5;
 }
 </style>

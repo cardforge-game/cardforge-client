@@ -26,7 +26,7 @@ const audio = {
     }),
     turn: new Howl({
         src: "/sounds/turn.webm",
-        volume: 0.3,
+        volume: 0.1,
     }),
     hover: {
         0: new Howl({

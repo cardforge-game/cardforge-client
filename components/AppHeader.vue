@@ -1,7 +1,8 @@
 <template>
     <header>
-        <a href="http://localhost:3000/">
-            <img src="~/assets/images/logo-header.png" />
+        <a href="/">
+            <img  v-if="!connection.room" src="~/assets/images/logo-header.png" class="selectable" />
+            <button v-else style="--type: var(--danger)" class="selectable">Leave</button>
         </a>
 
         <div class="right-side">
@@ -10,12 +11,26 @@
     </header>
 </template>
 
+<script>
+import connection from "~/services/connection"
+export default {
+    computed: {
+        connection(){
+            return connection;
+        }
+    }
+}
+</script>
+
 <style scoped>
 header {
     padding: 1rem;
-    background: var(--dark);
+    background: transparent;
     display: flex;
+    position: fixed;
+    width:100vw;
     align-items: center;
+    z-index:10;
 }
 
 .h5 {

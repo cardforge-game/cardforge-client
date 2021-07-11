@@ -1,7 +1,7 @@
 <template>
     <main>
         <div class="leaderboard">
-            <h1>Leaderboard</h1>
+            <h1 class="bold">Leaderboard</h1>
             <br>
             <div class="leaderboard-content">
                 <div>

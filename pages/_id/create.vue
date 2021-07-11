@@ -7,15 +7,12 @@
                 You've made <b class="h1">{{ acceptedCards }}</b> cards.
             </h1>
             <br />
-
-            <details open class="card-side">
                 <p class="h6 cost" v-if="cardData.cardCost">Other players can by this card at: <b>${{ cardData.cardCost }}</b></p>
-                <summary class="selectable unhighlightable bold h4">
+                <h4 class="bold h4">
                     Card Preview
-                </summary>
+                </h4>
                 <Card :size="30" :card="cardData" :show-details="true" />
-            </details>
-
+    
             <details v-if="currentCache.length > 0" class="card-side">
                 <summary class="selectable unhighlightable bold h4">
                     Previous Cards
@@ -42,7 +39,7 @@
         <section class="section">
             <form @submit.prevent="publishCard">
                 <div class="subsection">
-                    <h3>Card Stats</h3>
+                    <h3 class="bold">Card Stats</h3>
 
                     <div class="attack-form inline-fields">
                         <div class="field">
@@ -78,8 +75,8 @@
                     </div>
                 </div>
 
-                <h3>
-                    Card Attacks
+                <div class="subsection">
+                <h3 class="bold">Card Attacks
                     <button
                         v-if="cardData.attacks.length < 3 && cardData.name"
                         style="--type: var(--success)"
@@ -106,8 +103,9 @@
                     :key="`attackCardCreation-${i}`"
                     open
                     class="attack-form"
-                >
-                    <summary class="h4 bold section">{{ a.name }}</summary>
+                >   
+                    <summary v-if="a.name.length > 0" class="h4 section">{{ a.name }}</summary>
+                    <summary v-else class="h4 placeholder section">No Name</summary>
                     <div class="section">
                         <div class="field">
                             <label>Attack Name</label>
@@ -116,6 +114,7 @@
                                 placeholder="Slap"
                                 maxlength="20"
                                 required
+                                :class="{'attention':(a.name.length <= 0)}"
                             />
                             <button type="button" class="inline-block" @click="setExampleAttack(i)">🎲</button>
                         </div>
@@ -142,6 +141,7 @@
                         </div>
                     </div>
                 </details>
+                </div>
                 </div>
 
                 <div class="subsection" v-if="cardData.name">
@@ -283,8 +283,6 @@ main section {
 
 details {
     overflow: hidden;
-
-    background: var(--dark);
 }
 
 details:first-of-type {
@@ -295,6 +293,10 @@ details:first-of-type {
 details:last-of-type {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+}
+
+details .section{
+    background-color: var(--theme-dark);
 }
 
 .card-preview summary {
@@ -345,13 +347,7 @@ details:last-of-type {
     margin-right: 1rem;
 }
 
-input,
-textarea {
-    padding: 0.25rem 0.5rem;
-}
-
 .field label {
-    font-weight: bold;
     display: block;
 }
 
@@ -370,18 +366,16 @@ h3 * {
 }
 
 .attack-form:not(details) {
-    padding: 1rem;
+    padding: 1rem 0rem;
     margin: 1rem 0;
     border-radius: 10px;
-    border: var(--primary) 1.5px solid;
 }
 
-details.attack-form *:not(input):not(textarea) {
-    color: var(--light);
+.attack-form summary {
+    margin-top:1rem;
 }
 
 details.attack-form summary {
-    background: var(--secondary);
     position: relative;
 }
 
@@ -410,6 +404,10 @@ details.attack-form:last-of-type {
 
 .attention{
     border:solid 3px var(--secondary);
-    border-radius: 10px;
+}
+
+.placeholder{
+    color: gray;
+    font-style: italic;
 }
 </style>

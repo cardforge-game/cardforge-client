@@ -9,8 +9,10 @@
         <!-- Shows # Damaged/Healed etc... -->
         <span v-if="indicatorText" class="indicator h1">{{indicatorText}}</span>
         <header>
+            <transition name="slide-up">
             <h1
                 class="card-title"
+                v-if="card.name"
                 :style="`
                     font-size: max(${1.25 * size}px, ${
                     showDetails ? 1.5 : 1.25
@@ -18,11 +20,12 @@
             >
                 {{ card.name }}
             </h1>
+            </transition>
 
             <span class="card-health">
                 <b class="small">HP</b>
                 <span :class="graphicOnly ? '' : 'h6'">
-                    {{ card.health }}
+                    {{ ( card.health > 0) ?  card.health : 0 }}
                 </span>
             </span>
         </header>
@@ -133,7 +136,7 @@ export default Vue.extend({
                 ${this.rotation !== 0 ? `--rotate: ${this.rotation}deg;` : ""}
                 ${
                     this.shadow
-                        ? "box-shadow: 0 -5px 20px rgba(1, 9, 32, 0.5);"
+                        ? "box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);"
                         : ""
                 }
                 ${this.customStyle}
@@ -215,7 +218,7 @@ export default Vue.extend({
     margin: 1rem 0;
     border-radius: 5px;
     background: rgba(0, 0, 0, 0.8);
-    border: 2px var(--light) solid;
+    border: 2px transparent solid;
     transition: transform 0.25s ease-in-out;
 }
 
@@ -249,8 +252,6 @@ header {
     padding: calc(0.375rem - 1px) calc(0.25rem - 1px);
 
     border-radius: 0 10px 0 10px;
-    border-right: 2px var(--light) solid;
-    border-top: 2px var(--light) solid;
 
     position: relative;
     bottom: 2px;
@@ -300,7 +301,6 @@ header {
     min-height: 140px;
 
     border-radius: 10px;
-    border: 2px solid var(--light);
 
     background-size: cover;
     background-position: center;

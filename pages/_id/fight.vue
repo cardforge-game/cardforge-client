@@ -84,6 +84,12 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+main {
+  position : fixed;
+  width : 100vw;
+  height :100vh;
+}
+
 .info-bar {
     padding: 1rem;
     position: absolute;
