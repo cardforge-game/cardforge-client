@@ -8,9 +8,6 @@
             </h1>
             <br />
                 <p class="h6 cost" v-if="cardData.cardCost">Other players can by this card at: <b>${{ cardData.cardCost }}</b></p>
-                <h4 class="bold h4">
-                    Card Preview
-                </h4>
                 <Card :size="30" :card="cardData" :show-details="true" />
     
             <details v-if="currentCache.length > 0" class="card-side">
@@ -190,6 +187,7 @@ export default Vue.extend({
     },
     mounted() {
         if (!connection.eventRegistered && connection.room) {
+            this.cardData.health = (connection.state.resultsShown || 1) * 10
             Swal.fire(
                 "Creating Cards",
                 "In this phase of the game, you can to create your own playing cards for your opponents to use. " +
@@ -198,7 +196,7 @@ export default Vue.extend({
                 "info"
             );
 
-            connection.eventRegistered = true;
+            //connection.eventRegistered = true;
 
             connection.room.onMessage("previewCard", (card: IPreviewCard) => {
                 this.cardData = card;
@@ -214,17 +212,20 @@ export default Vue.extend({
 
                 this.acceptedCards++;
 
-                this.currentCache = JSON.parse(
-                    localStorage.getItem("cachedCards") || "[]"
-                );
 
                 if (this.currentCache.length >= 7) {
                     this.currentCache.shift();
                 }
 
+                const cache = JSON.parse(localStorage.getItem("cachedCards") as any || "[]")
+                
                 localStorage.setItem(
                     "cachedCards",
-                    JSON.stringify([...this.currentCache, this.cardData])
+                    JSON.stringify([...cache, this.cardData])
+                );
+
+                 this.currentCache = JSON.parse(
+                    localStorage.getItem("cachedCards") || "[]"
                 );
 
                 this.cardData = {
@@ -233,6 +234,7 @@ export default Vue.extend({
                     imgURL: "",
                     attacks: [],
                 };
+                
             });
         }
     },
@@ -300,8 +302,7 @@ details .section{
 }
 
 .card-preview summary {
-    background: var(--primary);
-    color: var(--light);
+    background: var(--theme-dark);  
     padding: 1rem;
     text-align: left;
 }
@@ -315,10 +316,6 @@ details .section{
     padding: 1rem;
     display: flex;
     align-items: center;
-}
-
-.previous-card .h4 {
-    color: var(--light);
 }
 
 .previous-card .button-group {
@@ -392,8 +389,8 @@ details.attack-form:last-of-type {
 }
 
 .cost{
-    color: var(--light);
-    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    background-color: var(--theme-dark);
 }
 
 .cost b{

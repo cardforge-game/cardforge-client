@@ -79,8 +79,7 @@ import Vue, { PropType } from "vue";
 export default Vue.extend({
     props: {
         size: {
-            type: Number,
-            required: true,
+            type: Number
         },
         card: {
             type: Object as PropType<ICard>,

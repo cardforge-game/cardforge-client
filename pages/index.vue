@@ -41,7 +41,7 @@
                             <span>Sir woofus slaps the enemy to remove 10 health!</span>
                         </div>
                         <p class="hint">Becomes</p>
-                        <Card :card="exampleCards[2]" :showDetails="true" />
+                        <Card :card="exampleCards[2]" :showDetails="true"/>
                     </span>
                 </section>
 
@@ -81,7 +81,7 @@
                 <section class="grid flex-center">
                     <span>
                         <div class="deck">
-                            <Card :key="`card-${i}`" :showDetails="true" :card="exampleCards[2]" :size="13"
+                            <Card :showDetails="true" :card="exampleCards[2]" :size="13"
                                 :shadow="false" :is-interactive="true" />
 
                         </div>

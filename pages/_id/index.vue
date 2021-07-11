@@ -15,6 +15,15 @@
                     Start Game
                 </button>
             </div>
+             <div
+                v-else
+                class="info-sidebar"
+            >
+                <div class="text">
+                    <span class="lead">Waiting for host to start...</span>
+                </div>
+            </div>
+            
         </portal>
 
         <TableTop />
