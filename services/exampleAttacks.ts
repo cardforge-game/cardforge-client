@@ -2,9 +2,6 @@ const examples=JSON.parse('[{"name":"Slap","desc":"[Name] slaps the enemy and de
 
 export default function getExampleAttack(name: string, roundNum: number) {
     const randomIndex = Math.floor(Math.random() * examples.length)
-    console.log(randomIndex)
-    console.log(examples[randomIndex])
-    console.log(examples.length)
     const exampleAttack = JSON.parse(JSON.stringify(examples[randomIndex]))
     //Replace with custom params
     exampleAttack.desc = exampleAttack.desc.split("[Name]").join(name).split("[Num]").join((Math.floor(Math.random() * 9) + 3) * roundNum)
