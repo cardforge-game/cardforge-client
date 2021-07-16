@@ -33,7 +33,7 @@ export default Vue.extend({
     color: var(--dark);
     padding: 1rem;
     text-align: center;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     position: relative;
     z-index: 5;
 }

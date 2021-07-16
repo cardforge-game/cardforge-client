@@ -7,9 +7,12 @@
                 You've made <b class="h1">{{ acceptedCards }}</b> cards.
             </h1>
             <br />
-                <p class="h6 cost" v-if="cardData.cardCost">Other players can by this card at: <b>${{ cardData.cardCost }}</b></p>
-                <Card :size="30" :card="cardData" :show-details="true" />
-    
+            <p v-if="cardData.cardCost" class="h6 cost">
+                Other players can by this card at:
+                <b>${{ cardData.cardCost }}</b>
+            </p>
+            <Card :size="30" :card="cardData" :show-details="true" />
+
             <details v-if="currentCache.length > 0" class="card-side">
                 <summary class="selectable unhighlightable bold h4">
                     Previous Cards
@@ -42,8 +45,10 @@
                         <div class="field">
                             <label>Card Name</label>
                             <input
-                                :class="{attention:(cardData.name.length <= 0)}"
                                 v-model="cardData.name"
+                                :class="{
+                                    attention: cardData.name.length <= 0,
+                                }"
                                 placeholder="Lord of Darkness"
                                 maxlength="24"
                                 required
@@ -73,75 +78,94 @@
                 </div>
 
                 <div class="subsection">
-                <h3 class="bold">Card Attacks
-                    <button
-                        v-if="cardData.attacks.length < 3 && cardData.name"
-                        style="--type: var(--success)"
-                        @click="
-                            cardData.attacks.push({
-                                name: '',
-                                desc: '',
-                            })
-                        "
+                    <h3 class="bold">
+                        Card Attacks
+                        <button
+                            v-if="cardData.attacks.length < 3 && cardData.name"
+                            style="--type: var(--success)"
+                            @click="
+                                cardData.attacks.push({
+                                    name: '',
+                                    desc: '',
+                                })
+                            "
+                        >
+                            Add Attack ⚔️
+                        </button>
+                    </h3>
+
+                    <p
+                        v-if="cardData.attacks.length === 0 && cardData.name"
+                        class="field"
                     >
-                        Add Attack ⚔️
-                    </button>
-                </h3>
-
-                <p v-if="cardData.attacks.length === 0 && cardData.name" class="field">
-                    You have no attacks setup! Click "Add Attack"
-                </p>
-                <p v-else-if="!cardData.name" class="field">
-                    Start creating a card by typing a name!
-                </p>
-                <div v-if="cardData.name">
-                <details
-                    v-for="(a, i) in cardData.attacks"
-                    :key="`attackCardCreation-${i}`"
-                    open
-                    class="attack-form"
-                >   
-                    <summary v-if="a.name.length > 0" class="h4 section">{{ a.name }}</summary>
-                    <summary v-else class="h4 placeholder section">No Name</summary>
-                    <div class="section">
-                        <div class="field">
-                            <label>Attack Name</label>
-                            <input
-                                v-model="a.name"
-                                placeholder="Slap"
-                                maxlength="20"
-                                required
-                                :class="{'attention':(a.name.length <= 0)}"
-                            />
-                            <button type="button" class="inline-block" @click="setExampleAttack(i)">🎲</button>
-                        </div>
-
-                        <div class="field">
-                            <label>Attack Description</label>
-                            <textarea
-                                v-model.lazy="a.desc"
-                                maxlength="100"
-                                :placeholder="`${
-                                    cardData.name || 'someone'
-                                } slaps the enemy dealing 10 damage!`"
-                                required
-                            />
-                        </div>
-
-                        <div class="field">
-                            <button
-                                style="--type: var(--danger)"
-                                @click="cardData.attacks.splice(i, 1)"
+                        You have no attacks setup! Click "Add Attack"
+                    </p>
+                    <p v-else-if="!cardData.name" class="field">
+                        Start creating a card by typing a name!
+                    </p>
+                    <div v-if="cardData.name">
+                        <details
+                            v-for="(a, i) in cardData.attacks"
+                            :key="`attackCardCreation-${i}`"
+                            open
+                            class="attack-form"
+                        >
+                            <summary
+                                v-if="a.name.length > 0"
+                                class="h4 section"
                             >
-                                Remove Attack
-                            </button>
-                        </div>
+                                {{ a.name }}
+                            </summary>
+                            <summary v-else class="h4 placeholder section">
+                                No Name
+                            </summary>
+                            <div class="section">
+                                <div class="field">
+                                    <label>Attack Name</label>
+                                    <input
+                                        v-model="a.name"
+                                        placeholder="Slap"
+                                        maxlength="20"
+                                        required
+                                        :class="{
+                                            attention: a.name.length <= 0,
+                                        }"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="inline-block"
+                                        @click="setExampleAttack(i)"
+                                    >
+                                        🎲
+                                    </button>
+                                </div>
+
+                                <div class="field">
+                                    <label>Attack Description</label>
+                                    <textarea
+                                        v-model.lazy="a.desc"
+                                        maxlength="100"
+                                        :placeholder="`${
+                                            cardData.name || 'someone'
+                                        } slaps the enemy dealing 10 damage!`"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="field">
+                                    <button
+                                        style="--type: var(--danger)"
+                                        @click="cardData.attacks.splice(i, 1)"
+                                    >
+                                        Remove Attack
+                                    </button>
+                                </div>
+                            </div>
+                        </details>
                     </div>
-                </details>
-                </div>
                 </div>
 
-                <div class="subsection" v-if="cardData.name">
+                <div v-if="cardData.name" class="subsection">
                     <div class="button-group">
                         <button
                             type="button"
@@ -175,9 +199,7 @@ export default Vue.extend({
                 name: "",
                 health: 10,
                 imgURL: "",
-                attacks: [
-                
-                ],
+                attacks: [],
             } as IPreviewCard,
             acceptedCards: 0,
             currentCache: JSON.parse(
@@ -187,7 +209,7 @@ export default Vue.extend({
     },
     mounted() {
         if (!connection.eventRegistered && connection.room) {
-            this.cardData.health = (connection.state.resultsShown || 1) * 10
+            this.cardData.health = (connection.state.resultsShown || 1) * 10;
             Swal.fire(
                 "Creating Cards",
                 "In this phase of the game, you can to create your own playing cards for your opponents to use. " +
@@ -196,7 +218,7 @@ export default Vue.extend({
                 "info"
             );
 
-            //connection.eventRegistered = true;
+            // connection.eventRegistered = true;
 
             connection.room.onMessage("previewCard", (card: IPreviewCard) => {
                 this.cardData = card;
@@ -212,19 +234,20 @@ export default Vue.extend({
 
                 this.acceptedCards++;
 
-
                 if (this.currentCache.length >= 7) {
                     this.currentCache.shift();
                 }
 
-                const cache = JSON.parse(localStorage.getItem("cachedCards") as any || "[]")
-                
+                const cache = JSON.parse(
+                    (localStorage.getItem("cachedCards") as any) || "[]"
+                );
+
                 localStorage.setItem(
                     "cachedCards",
                     JSON.stringify([...cache, this.cardData])
                 );
 
-                 this.currentCache = JSON.parse(
+                this.currentCache = JSON.parse(
                     localStorage.getItem("cachedCards") || "[]"
                 );
 
@@ -234,7 +257,6 @@ export default Vue.extend({
                     imgURL: "",
                     attacks: [],
                 };
-                
             });
         }
     },
@@ -255,9 +277,16 @@ export default Vue.extend({
                 JSON.stringify(this.currentCache)
             );
         },
-        setExampleAttack(i: number){
-            Vue.set(this.cardData.attacks,i,getExampleAttack(this.cardData.name,connection.state.resultsShown))
-        }
+        setExampleAttack(i: number) {
+            Vue.set(
+                this.cardData.attacks,
+                i,
+                getExampleAttack(
+                    this.cardData.name,
+                    connection.state.resultsShown
+                )
+            );
+        },
     },
 });
 </script>
@@ -297,12 +326,12 @@ details:last-of-type {
     border-bottom-right-radius: 10px;
 }
 
-details .section{
+details .section {
     background-color: var(--theme-dark);
 }
 
 .card-preview summary {
-    background: var(--theme-dark);  
+    background: var(--theme-dark);
     padding: 1rem;
     text-align: left;
 }
@@ -369,7 +398,7 @@ h3 * {
 }
 
 .attack-form summary {
-    margin-top:1rem;
+    margin-top: 1rem;
 }
 
 details.attack-form summary {
@@ -388,22 +417,22 @@ details.attack-form:last-of-type {
     display: inline-block;
 }
 
-.cost{
+.cost {
     padding: 0.5rem 0;
     background-color: var(--theme-dark);
 }
 
-.cost b{
+.cost b {
     background-color: var(--success);
     color: var(--light);
     padding: 0px 0.5rem;
 }
 
-.attention{
-    border:solid 3px var(--secondary);
+.attention {
+    border: solid 3px var(--secondary);
 }
 
-.placeholder{
+.placeholder {
     color: gray;
     font-style: italic;
 }

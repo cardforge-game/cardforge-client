@@ -15,7 +15,7 @@ import connection from "~/services/connection";
 export default Vue.extend({
     computed: {
         currentPlayer() {
-            return connection.currentPlayer || {name:""};
+            return connection.currentPlayer || { name: "" };
         },
     },
 });
@@ -33,7 +33,7 @@ b {
     color: var(--dark);
 }
 
-.text-light{
+.text-light {
     color: var(--light);
 }
 </style>

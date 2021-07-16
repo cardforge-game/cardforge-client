@@ -48,5 +48,5 @@ const audio = {
         },
     } as ISoundState,
 };
-(window as any).ss = audio
+(window as any).ss = audio;
 export default audio;

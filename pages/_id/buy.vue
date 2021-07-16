@@ -13,7 +13,7 @@
                     >
                         <div class="card-overhead">
                             <span class="card-price-display">
-                                Cost: $     {{ c.cardCost }}
+                                Cost: $ {{ c.cardCost }}
                             </span>
                         </div>
                         <Card
@@ -21,7 +21,7 @@
                             :card="c"
                             :size="15"
                             :shadow="false"
-                             @click="buyCard(c.id)"
+                            @click="buyCard(c.id)"
                         />
                     </div>
                 </div>
@@ -47,21 +47,31 @@
                 </div>
             </div>
             <div class="deck">
-                <h1 class="section-header">Active Deck ⚡ ({{connection.currentPlayer.deck.length}}/7)</h1>
+                <h1 class="section-header">
+                    Active Deck ⚡ ({{
+                        connection.currentPlayer.deck.length
+                    }}/7)
+                </h1>
                 <div class="card-container">
-                <p class="hint" v-if="connection.currentPlayer.deck.length === 0">Click on cards from your collection to use them in battle!</p>
-                <div
-                    v-for="(c, i) in connection.currentPlayer.deck"
-                    :key="`card-deck-${i}`"
-                    class="card-item"
-                >
-                    <Card
-                        :card="c"
-                        :size="15"
-                        :shadow="false"
-                        @click="addToInv(i)"
-                    />
-                </div>
+                    <p
+                        v-if="connection.currentPlayer.deck.length === 0"
+                        class="hint"
+                    >
+                        Click on cards from your collection to use them in
+                        battle!
+                    </p>
+                    <div
+                        v-for="(c, i) in connection.currentPlayer.deck"
+                        :key="`card-deck-${i}`"
+                        class="card-item"
+                    >
+                        <Card
+                            :card="c"
+                            :size="15"
+                            :shadow="false"
+                            @click="addToInv(i)"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,7 +85,7 @@ import connection from "~/services/connection";
 import audio from "~/services/audio";
 
 export default Vue.extend({
-    //middleware: "validateGamePhase",
+    // middleware: "validateGamePhase",
 
     data() {
         return {
@@ -128,7 +138,7 @@ main {
     }
 }
 
-.card:hover{
+.card:hover {
     cursor: pointer;
 }
 
@@ -138,7 +148,7 @@ main {
     overflow-x: hidden;
 }
 
-.card-container .hint{
+.card-container .hint {
     text-align: center;
 }
 
@@ -162,7 +172,7 @@ main {
     color: var(--light);
 }
 
-.card-overhead .card-buy-button{
+.card-overhead .card-buy-button {
     background-color: var(--primary);
     color: var(--light);
 }
@@ -176,7 +186,7 @@ main {
     flex-direction: column;
 }
 
-.row .deck{
+.row .deck {
     border-radius: 10px 10px 10px 10px;
     margin-right: 0;
     border-right: none;
@@ -217,8 +227,7 @@ main {
     max-width: 11rem;
 }
 
-.active-deck-info b{
+.active-deck-info b {
     color: var(--light);
 }
-
 </style>

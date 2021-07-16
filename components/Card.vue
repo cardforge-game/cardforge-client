@@ -1,31 +1,38 @@
 <template>
     <div
-        :class="{card:true,'interactive-card':isInteractive,'damaged':damaged,'healed':healed}"
+        :class="{
+            card: true,
+            'interactive-card': isInteractive,
+            damaged: damaged,
+            healed: healed,
+        }"
         :style="cardStyles"
         @click="handleClick"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
     >
         <!-- Shows # Damaged/Healed etc... -->
-        <span v-if="indicatorText" class="indicator h1">{{indicatorText}}</span>
+        <span v-if="indicatorText" class="indicator h1">{{
+            indicatorText
+        }}</span>
         <header>
             <transition name="slide-up">
-            <h1
-                class="card-title"
-                v-if="card.name"
-                :style="`
+                <h1
+                    v-if="card.name"
+                    class="card-title"
+                    :style="`
                     font-size: max(${1.25 * size}px, ${
-                    showDetails ? 1.5 : 1.25
-                }rem);`"
-            >
-                {{ card.name }}
-            </h1>
+                        showDetails ? 1.5 : 1.25
+                    }rem);`"
+                >
+                    {{ card.name }}
+                </h1>
             </transition>
 
             <span class="card-health">
                 <b class="small">HP</b>
                 <span :class="graphicOnly ? '' : 'h6'">
-                    {{ ( card.health > 0) ?  card.health : 0 }}
+                    {{ card.health > 0 ? card.health : 0 }}
                 </span>
             </span>
         </header>
@@ -79,7 +86,7 @@ import Vue, { PropType } from "vue";
 export default Vue.extend({
     props: {
         size: {
-            type: Number
+            type: Number,
         },
         card: {
             type: Object as PropType<ICard>,
@@ -117,10 +124,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        indicatorText:{
+        indicatorText: {
             type: String,
-            default:null
-        }
+            default: null,
+        },
     },
     computed: {
         cardStyles() {
@@ -140,7 +147,7 @@ export default Vue.extend({
                 }
                 ${this.customStyle}
             `.replace(/\n/g, " ");
-        }
+        },
     },
     methods: {
         handleClick() {
@@ -319,78 +326,77 @@ hr {
 <style>
 /* DAMAGE */
 @keyframes damage {
-  0%{
-    transform: rotate(var(--rotate)) translateX(50px);
-    border: 5px solid var(--danger);
-  }
-  12.5%{
-    transform: rotate(var(--rotate)) translateX(-50px)
-  }
-  37.5%{
-    transform: rotate(var(--rotate)) translateX(40px)
-  }
-  50%{
-    transform: rotate(var(--rotate)) translateX(-40px);
-    border: 5px solid var(--danger);
-    background-image: linear-gradient(#ff7675, #ff7675, #ff7675);
-  }
-  62.5%{
-    transform: rotate(var(--rotate)) translateX(30px)
-  }
-  75%{
-    transform: rotate(var(--rotate)) translateX(-20px)
-  }
-  87.5%{
-    transform: rotate(var(--rotate)) translateX(20px)
-  }
-  100%{
-    transform: rotate(var(--rotate)) translateX(0px)
-  }
+    0% {
+        transform: rotate(var(--rotate)) translateX(50px);
+        border: 5px solid var(--danger);
+    }
+    12.5% {
+        transform: rotate(var(--rotate)) translateX(-50px);
+    }
+    37.5% {
+        transform: rotate(var(--rotate)) translateX(40px);
+    }
+    50% {
+        transform: rotate(var(--rotate)) translateX(-40px);
+        border: 5px solid var(--danger);
+        background-image: linear-gradient(#ff7675, #ff7675, #ff7675);
+    }
+    62.5% {
+        transform: rotate(var(--rotate)) translateX(30px);
+    }
+    75% {
+        transform: rotate(var(--rotate)) translateX(-20px);
+    }
+    87.5% {
+        transform: rotate(var(--rotate)) translateX(20px);
+    }
+    100% {
+        transform: rotate(var(--rotate)) translateX(0px);
+    }
 }
-.damaged{
-  animation: damage 0.6s ease;
+.damaged {
+    animation: damage 0.6s ease;
 }
 
 /* HEAL */
 @keyframes heal {
-  10%{
-      transform: rotate(var(--rotate)) scaleX(0.5) scaleY(0.7);
-      border: 5px solid #55efc4;
-  }
-  40%{
-      transform: rotate(var(--rotate)) scale(1.3);
-      border: 5px solid #55efc4;
-      background-image: linear-gradient(#55efc4, #55efc4, #55efc4);
-  }
-  80%{
-   transform: rotate(var(--rotate)) scale(1);
-   border: 5px solid #949796;
-  }
+    10% {
+        transform: rotate(var(--rotate)) scaleX(0.5) scaleY(0.7);
+        border: 5px solid #55efc4;
+    }
+    40% {
+        transform: rotate(var(--rotate)) scale(1.3);
+        border: 5px solid #55efc4;
+        background-image: linear-gradient(#55efc4, #55efc4, #55efc4);
+    }
+    80% {
+        transform: rotate(var(--rotate)) scale(1);
+        border: 5px solid #949796;
+    }
 }
-.healed{
-  animation: heal 1s ease-in-out;
+.healed {
+    animation: heal 1s ease-in-out;
 }
 
 /* Damage etc.. indicator */
-@keyframes float-up{
-    0%{
+@keyframes float-up {
+    0% {
         opacity: 0;
-        transform: translateY(100px)
+        transform: translateY(100px);
     }
-    40%{
-        opacity:1;
+    40% {
+        opacity: 1;
     }
-    100%{
+    100% {
         opacity: 0;
         transform: translateY(-100px);
     }
 }
-.indicator{
+.indicator {
     animation: float-up 2s ease forwards;
-    position:absolute;
-    color:white;
-    font-weight:bold;
-    left:30%;
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    left: 30%;
 }
-
 </style>

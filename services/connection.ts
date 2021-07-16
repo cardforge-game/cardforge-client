@@ -18,7 +18,7 @@ const connection = new Vue({
                 library: [] as ICard[],
                 leaderboard: {} as Record<string, number>,
                 pointMetrics: [],
-                lastAttack: undefined as IAttackBroadcast|undefined
+                lastAttack: undefined as IAttackBroadcast | undefined,
             },
             state: {
                 phase: "WAITING",
@@ -119,13 +119,10 @@ const connection = new Vue({
             });
 
             // Listen for results:
-            this.room?.onMessage(
-                "leaderboardUpdate",
-                (update) => {
-                    this.unsynced.leaderboard = update.leaderboard;
-                    this.unsynced.pointMetrics = update.pointMetrics;
-                }
-            );
+            this.room?.onMessage("leaderboardUpdate", (update) => {
+                this.unsynced.leaderboard = update.leaderboard;
+                this.unsynced.pointMetrics = update.pointMetrics;
+            });
 
             // Listen for timer resets:
             this.room?.onMessage("resetClock", (count: number) => {
@@ -136,12 +133,19 @@ const connection = new Vue({
                     1000
                 );
             });
-            
-            //Game Over Alert:
-            this.room?.onMessage("gameOver",(r)=>{
-                const winnerName = Object.entries(r).sort((a,b)=> (b[1] as number) - (a[1] as number)).map(([k,v])=>k)[0]
-                Swal.fire({title: "Game Over!",text:`The winner is ${winnerName}`, timer:10000, icon:"success" })
-            })
+
+            // Game Over Alert:
+            this.room?.onMessage("gameOver", (r) => {
+                const winnerName = Object.entries(r)
+                    .sort((a, b) => (b[1] as number) - (a[1] as number))
+                    .map(([k]) => k)[0];
+                Swal.fire({
+                    title: "Game Over!",
+                    text: `The winner is ${winnerName}`,
+                    timer: 10000,
+                    icon: "success",
+                });
+            });
         },
         resetGameState() {
             try {
