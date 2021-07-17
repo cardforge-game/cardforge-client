@@ -19,6 +19,7 @@ const connection = new Vue({
                 leaderboard: {} as Record<string, number>,
                 pointMetrics: [],
                 lastAttack: undefined as IAttackBroadcast | undefined,
+                disconnnected:undefined as string | undefined
             },
             state: {
                 phase: "WAITING",
@@ -146,6 +147,12 @@ const connection = new Vue({
                     icon: "success",
                 });
             });
+
+            //Disconnnected from server
+            this.room?.onMessage("disconnect", (r)=>{
+                this.unsynced.disconnnected = r
+                this.room?.leave();
+            })
         },
         resetGameState() {
             try {
@@ -153,6 +160,7 @@ const connection = new Vue({
                 this.room?.leave();
                 this.eventRegistered = false;
                 this.room = undefined;
+                this.unsynced.disconnnected = undefined;
             } catch (error) {}
         },
     },
