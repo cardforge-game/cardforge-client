@@ -1,6 +1,6 @@
 <template>
     <div
-        v-if="formattedTime !== -1 && connection.room"
+        v-if="formattedTime !== -1 && connection.room && connection.room.state.phase !== 'FIGHTING'"
         class="clock-bar h1 bold"
     >
         {{ formattedTime }}
