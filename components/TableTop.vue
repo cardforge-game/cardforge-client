@@ -41,14 +41,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-
-import Swal from "sweetalert2";
 import connection from "~/services/connection";
 
 export default Vue.extend({
     data() {
         return {
-            turnInitiated: false,
             showCardDialog: false,
             attackTarget: null as string | null,
         };
@@ -93,23 +90,9 @@ export default Vue.extend({
                 connection.currentPlayer?.id ===
                 connection.state.activePlayerID;
 
-            if (this.turnInitiated && !clickedSelf) {
-                this.turnInitiated = false;
-                Swal.fire({
-                    title: `You're attacking ${player.name}.`,
-                    text: `Now choose an attack on your active card.`,
-                    icon: "info",
-                });
+            if (selfTurn && !clickedSelf) {
                 this.attackTarget = player.id || null;
                 this.showCardDialog = true;
-            } else if (clickedSelf && selfTurn) {
-                Swal.fire({
-                    title: "You're starting your turn.",
-                    text: `Click on an opponent to attack them`,
-                    icon: "info",
-                    toast: true,
-                });
-                this.turnInitiated = true;
             }
         },
         doAttack(_attack: IAttack, attackIndex: number) {
@@ -146,6 +129,7 @@ export default Vue.extend({
 
 .card-dialog-perspective {
     position: fixed;
+    right: 100px;
 }
 
 .row {

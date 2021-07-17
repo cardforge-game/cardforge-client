@@ -14,11 +14,19 @@ const audio = {
         src: "/sounds/damage.wav",
         volume: 0.9,
     }),
+    heal: new Howl({
+        src: "/sounds/heal.webm",
+        volume: 1.1,
+    }),
     changeCard: new Howl({
-        src: "./sounds/changeCard.ogg",
+        src: "/sounds/changeCard.ogg",
     }),
     placeCard: new Howl({
         src: "/sounds/placeCard.ogg",
+    }),
+    turn: new Howl({
+        src: "/sounds/turn.webm",
+        volume: 0.1,
     }),
     hover: {
         0: new Howl({
@@ -40,5 +48,5 @@ const audio = {
         },
     } as ISoundState,
 };
-
+(window as any).ss = audio;
 export default audio;

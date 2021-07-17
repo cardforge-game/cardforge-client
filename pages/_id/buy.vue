@@ -7,19 +7,13 @@
                 <h1 class="section-header shop">Card Shop 🛒</h1>
                 <div class="card-container">
                     <div
-                        v-for="(c, i) in connection.unsynced.library"
+                        v-for="(c, i) in formattedLibary"
                         :key="`card-${i}`"
                         class="card-item"
                     >
                         <div class="card-overhead">
                             <span class="card-price-display">
-                                Cost: {{ c.cardCost }}
-                            </span>
-                            <span
-                                class="selectable card-buy-button"
-                                @click="buyCard(c.id)"
-                            >
-                                Buy Card
+                                Cost: $ {{ c.cardCost }}
                             </span>
                         </div>
                         <Card
@@ -27,12 +21,16 @@
                             :card="c"
                             :size="15"
                             :shadow="false"
+                            @click="buyCard(c.id)"
                         />
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="row">
             <div class="deck">
-                <h1 class="section-header">Inventory 🎒</h1>
+                <h1 class="section-header">Collection 🎒</h1>
                 <div class="card-container">
                     <div
                         v-for="(c, i) in connection.currentPlayer.inventory"
@@ -48,33 +46,32 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="row deck horizontal">
-            <div class="section-header">
-                <h1>Active Deck ⚡</h1>
-                <p class="active-deck-info">
-                    Select 7 cards from your inventory that you can play in the
-                    upcoming round.
-                    <br /><br />
-                    <b
-                        >Currently:
-                        {{ connection.currentPlayer.deck.length }}/7</b
+            <div class="deck">
+                <h1 class="section-header">
+                    Active Deck ⚡ ({{
+                        connection.currentPlayer.deck.length
+                    }}/7)
+                </h1>
+                <div class="card-container">
+                    <p
+                        v-if="connection.currentPlayer.deck.length === 0"
+                        class="hint"
                     >
-                </p>
-            </div>
-            <div class="card-container">
-                <div
-                    v-for="(c, i) in connection.currentPlayer.deck"
-                    :key="`card-deck-${i}`"
-                    class="card-item"
-                >
-                    <Card
-                        :card="c"
-                        :size="15"
-                        :shadow="false"
-                        @click="addToInv(i)"
-                    />
+                        Click on cards from your collection to use them in
+                        battle!
+                    </p>
+                    <div
+                        v-for="(c, i) in connection.currentPlayer.deck"
+                        :key="`card-deck-${i}`"
+                        class="card-item"
+                    >
+                        <Card
+                            :card="c"
+                            :size="15"
+                            :shadow="false"
+                            @click="addToInv(i)"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -88,7 +85,7 @@ import connection from "~/services/connection";
 import audio from "~/services/audio";
 
 export default Vue.extend({
-    middleware: "validateGamePhase",
+    // middleware: "validateGamePhase",
 
     data() {
         return {
@@ -100,6 +97,9 @@ export default Vue.extend({
         connection() {
             return connection;
         },
+        formattedLibary(){
+            return connection.unsynced.library.reverse()
+        }
     },
     mounted() {
         Swal.fire(
@@ -130,16 +130,29 @@ export default Vue.extend({
 <style scoped>
 main {
     margin: 1rem 2rem;
-
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     flex-direction: column;
+}
+@media only screen and (max-width: 640px) {
+    main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+}
+
+.card:hover {
+    cursor: pointer;
 }
 
 .card-container {
-    max-height: 40vh;
-
+    max-height: 78vh;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.card-container .hint {
+    text-align: center;
 }
 
 .card-item {
@@ -155,17 +168,11 @@ main {
     font-weight: bold;
 
     padding: 0.25rem 0.5rem;
-
-    border: 2px var(--light) solid;
-    border-bottom: none;
-
-    border-radius: 10px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
 }
 
 .card-overhead .card-price-display {
     background-color: var(--success);
+    color: var(--light);
 }
 
 .card-overhead .card-buy-button {
@@ -177,31 +184,21 @@ main {
     margin: 0 -6.25px;
 }
 
-.shop .card::v-deep {
-    border-top-left-radius: 0;
-}
-
 .row {
     display: flex;
+    flex-direction: column;
 }
 
-.row .deck:first-of-type {
-    border-radius: 10px 0 0 10px;
+.row .deck {
+    border-radius: 10px 10px 10px 10px;
     margin-right: 0;
     border-right: none;
 }
 
-.row .deck:last-of-type {
-    border-radius: 0 10px 10px 0;
-    margin-left: 0;
-}
-
 .deck {
-    background-color: var(--primary-light);
+    background-color: var(--theme-dark);
     flex: 1;
     margin: 1rem;
-    border: var(--dark) 2px solid;
-    border-radius: 10px;
     overflow: hidden;
 }
 
@@ -209,18 +206,11 @@ main {
     padding: 1rem;
     margin: -2px;
 
-    border-bottom: 2px var(--dark) solid;
-
     font-size: max(20px, 2vw);
     font-weight: bold;
-
-    background: var(--primary);
-    color: var(--light);
 }
 
 .deck.horizontal .section-header {
-    border-bottom: none;
-    border-right: 2px var(--dark) solid;
     padding: 1rem 0;
 }
 
@@ -235,7 +225,12 @@ main {
 }
 
 .active-deck-info {
+    color: var(--light);
     padding: 1rem;
     max-width: 11rem;
+}
+
+.active-deck-info b {
+    color: var(--light);
 }
 </style>

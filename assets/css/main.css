@@ -1,11 +1,12 @@
 @import url("./variables.css");
 @import url("./utils.css");
 @import url("./elements.css");
+@import url("./animations.css");
 
 html {
     font-size: 16px;
     
-    background: var(--light);
+    background: var(--theme);
 }
 
 * {
@@ -15,7 +16,7 @@ html {
 
     font-size: 1rem;
     font-weight: normal;
-    font-family: "Raleway", "Segoe UI", "Roboto", sans-serif;
+    font-family: "Roboto", "Segoe UI", sans-serif;
     color: var(--dark);
 }
 
@@ -57,4 +58,39 @@ b,
 small,
 .small {
     font-size: 0.75rem;
+}
+
+input,
+textarea {
+    border:none;
+    border-radius:0px;
+    padding: 0.65rem 0.65rem;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+input.fullwidth{
+    width: 100%;
+}
+
+input:focus,textarea:focus {
+    outline: none;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08), 0 6px 6px rgba(0,0,0,0.12);
+}
+
+::-webkit-scrollbar-track
+{
+	border-radius: 10px;
+	background-color:transparent;
+}
+
+::-webkit-scrollbar
+{
+	width: 12px;
+	background-color:transparent;
+}
+
+::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-color: var(--dark);
 }

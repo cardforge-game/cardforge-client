@@ -1,25 +1,38 @@
 <template>
     <div
-        :class="`card ${isInteractive ? 'interactive-card' : ''}`"
+        :class="{
+            card: true,
+            'interactive-card': isInteractive,
+            damaged: damaged,
+            healed: healed,
+        }"
         :style="cardStyles"
         @click="handleClick"
         @mouseenter="handleMouseEnter"
+        @mouseleave="handleMouseLeave"
     >
+        <!-- Shows # Damaged/Healed etc... -->
+        <span v-if="indicatorText" class="indicator h1">{{
+            indicatorText
+        }}</span>
         <header>
-            <h1
-                class="card-title"
-                :style="`
+            <transition name="slide-up">
+                <h1
+                    v-if="card.name"
+                    class="card-title"
+                    :style="`
                     font-size: max(${1.25 * size}px, ${
-                    showDetails ? 1.5 : 1.25
-                }rem);`"
-            >
-                {{ card.name }}
-            </h1>
+                        showDetails ? 1.5 : 1.25
+                    }rem);`"
+                >
+                    {{ card.name }}
+                </h1>
+            </transition>
 
             <span class="card-health">
                 <b class="small">HP</b>
                 <span :class="graphicOnly ? '' : 'h6'">
-                    {{ card.health }}
+                    {{ card.health > 0 ? card.health : 0 }}
                 </span>
             </span>
         </header>
@@ -48,8 +61,8 @@
                             class="attack-desc"
                         >
                             {{
-                                a.desc.length > 30
-                                    ? `${a.desc.substring(0, 90)}...`
+                                a.desc.length > 100
+                                    ? `${a.desc.substring(0, 100)}...`
                                     : a.desc
                             }}
                         </small>
@@ -74,7 +87,6 @@ export default Vue.extend({
     props: {
         size: {
             type: Number,
-            required: true,
         },
         card: {
             type: Object as PropType<ICard>,
@@ -104,6 +116,18 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        damaged: {
+            type: Boolean,
+            default: false,
+        },
+        healed: {
+            type: Boolean,
+            default: false,
+        },
+        indicatorText: {
+            type: String,
+            default: null,
+        },
     },
     computed: {
         cardStyles() {
@@ -118,7 +142,7 @@ export default Vue.extend({
                 ${this.rotation !== 0 ? `--rotate: ${this.rotation}deg;` : ""}
                 ${
                     this.shadow
-                        ? "box-shadow: 0 -5px 20px rgba(1, 9, 32, 0.5);"
+                        ? "box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);"
                         : ""
                 }
                 ${this.customStyle}
@@ -131,6 +155,9 @@ export default Vue.extend({
         },
         handleMouseEnter() {
             this.$emit("mouseenter");
+        },
+        handleMouseLeave() {
+            this.$emit("mouseleave");
         },
         showAttackDetails(i: number) {
             Swal.fire(
@@ -145,7 +172,7 @@ export default Vue.extend({
     },
 });
 </script>
-
+<!-- Card Formating/Positions -->
 <style>
 .attack-stats {
     display: flex;
@@ -197,7 +224,7 @@ export default Vue.extend({
     margin: 1rem 0;
     border-radius: 5px;
     background: rgba(0, 0, 0, 0.8);
-    border: 2px var(--light) solid;
+    border: 2px transparent solid;
     transition: transform 0.25s ease-in-out;
 }
 
@@ -210,7 +237,7 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     margin-right: 1rem;
-    height: 100%;
+    height: 175%;
     justify-content: space-evenly;
 }
 
@@ -231,8 +258,6 @@ header {
     padding: calc(0.375rem - 1px) calc(0.25rem - 1px);
 
     border-radius: 0 10px 0 10px;
-    border-right: 2px var(--light) solid;
-    border-top: 2px var(--light) solid;
 
     position: relative;
     bottom: 2px;
@@ -282,7 +307,6 @@ header {
     min-height: 140px;
 
     border-radius: 10px;
-    border: 2px solid var(--light);
 
     background-size: cover;
     background-position: center;
@@ -290,12 +314,89 @@ header {
 
     --rotate: 0deg;
     transform: rotate(var(--rotate));
-
-    transition: border-color 0.25s ease-in-out;
+    transition: border 0.5s ease-in-out, transform 0.25s ease-in-out;
 }
 
 hr {
     border: none;
     border-top: 1px white solid;
+}
+</style>
+<!-- Card Effects -->
+<style>
+/* DAMAGE */
+@keyframes damage {
+    0% {
+        transform: rotate(var(--rotate)) translateX(50px);
+        border: 5px solid var(--danger);
+    }
+    12.5% {
+        transform: rotate(var(--rotate)) translateX(-50px);
+    }
+    37.5% {
+        transform: rotate(var(--rotate)) translateX(40px);
+    }
+    50% {
+        transform: rotate(var(--rotate)) translateX(-40px);
+        border: 5px solid var(--danger);
+        background-image: linear-gradient(#ff7675, #ff7675, #ff7675);
+    }
+    62.5% {
+        transform: rotate(var(--rotate)) translateX(30px);
+    }
+    75% {
+        transform: rotate(var(--rotate)) translateX(-20px);
+    }
+    87.5% {
+        transform: rotate(var(--rotate)) translateX(20px);
+    }
+    100% {
+        transform: rotate(var(--rotate)) translateX(0px);
+    }
+}
+.damaged {
+    animation: damage 0.6s ease;
+}
+
+/* HEAL */
+@keyframes heal {
+    10% {
+        transform: rotate(var(--rotate)) scaleX(0.5) scaleY(0.7);
+        border: 5px solid #55efc4;
+    }
+    40% {
+        transform: rotate(var(--rotate)) scale(1.3);
+        border: 5px solid #55efc4;
+        background-image: linear-gradient(#55efc4, #55efc4, #55efc4);
+    }
+    80% {
+        transform: rotate(var(--rotate)) scale(1);
+        border: 5px solid #949796;
+    }
+}
+.healed {
+    animation: heal 1s ease-in-out;
+}
+
+/* Damage etc.. indicator */
+@keyframes float-up {
+    0% {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    40% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+}
+.indicator {
+    animation: float-up 2s ease forwards;
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    left: 30%;
 }
 </style>

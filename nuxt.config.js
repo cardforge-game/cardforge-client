@@ -23,13 +23,29 @@ export default {
                 content:
                     "An AI-powered card game where infinite creativity is in your hand.",
             },
+            {
+                hid: "og:title",
+                name: "og:title",
+                content: "CardForge",
+            },
+            {
+                hid: "og:image",
+                property: "og:image",
+                content: "/logo.png",
+            },
+            {
+                hid: "og:description",
+                property: "og:description",
+                content:
+                    "An online party card battling game where the players make the cards!",
+            },
             { name: "format-detection", content: "telephone=no" },
         ],
         link: [
             { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
             {
                 rel: "stylesheet",
-                href: "https://fonts.googleapis.com/css2?family=Raleway&display=swap",
+                href: "https://fonts.googleapis.com/css2?family=Roboto&display=swap",
             },
         ],
     },
@@ -38,7 +54,7 @@ export default {
     css: ["~/assets/css/main.css"],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-    plugins: ["~/plugins/PortalVue.ts"],
+    plugins: ["~/plugins/PortalVue.ts", "~/plugins/Charts.ts"],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
     components: true,

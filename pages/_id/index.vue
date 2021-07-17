@@ -15,6 +15,11 @@
                     Start Game
                 </button>
             </div>
+            <div v-else class="info-sidebar">
+                <div class="text">
+                    <span class="lead">Waiting for host to start...</span>
+                </div>
+            </div>
         </portal>
 
         <TableTop />
@@ -86,15 +91,16 @@ export default Vue.extend({
                     "Make it short, sweet, and representative of your greatness.",
                 showCancelButton: true,
                 inputValidator: (value) =>
-                    value.trim().length === 0 ? "Type in a code." : null,
+                    value.trim().length < 3 ? "Usernames must be at least three characters long." : null,
             });
 
             if (res.isDenied || res.isDismissed) {
                 return this.$router.push("/");
             }
 
-            await connection.joinRoom(res.value.trim(), this.id.trim());
-
+            const connected = await connection.joinRoom(res.value.trim(), this.id.trim());
+            if(!connected.success) connection.unsynced.disconnnected = "That room code does not exist or has already been expired"
+            
             connection.temp = {
                 host: false,
                 username: "",

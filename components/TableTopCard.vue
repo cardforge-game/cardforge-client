@@ -1,11 +1,18 @@
 <template>
     <Card
         v-if="player && player.activeCard"
+        :ref="player.name"
         :card="activeCard"
-        :class="isActivePlayer ? 'is-active-player' : ''"
-        :custom-style="isEnemy ? 'border-color: var(--danger);' : ''"
+        :class="{
+            'is-active-card': isActiveCard,
+            thinking: isNotCurrentPlayer,
+            'is-enemy': isEnemy,
+        }"
         :size="9"
         :graphic-only="true"
+        :damaged="isDamaged"
+        :healed="isHealed"
+        :indicator-text="indicatorText"
         @click="onClick"
     />
     <p v-else-if="player" class="no-active-username">
@@ -26,8 +33,48 @@ export default Vue.extend({
         },
     },
     computed: {
-        isActivePlayer(): boolean {
+        isDamaged(): boolean {
+            return (
+                connection.unsynced.lastAttack?.reciever === this.player?.id &&
+                (connection.unsynced.lastAttack?.attack.damage || -1) > 0
+            );
+        },
+        isHealed(): boolean {
+            return (
+                connection.unsynced.lastAttack?.attacker === this.player?.id &&
+                (connection.unsynced.lastAttack?.attack.heal || -1) > 0
+            );
+        },
+        indicatorText(): string | null {
+            // Find the value and prefix of the indicatorText
+            const effect = [
+                {
+                    prefix: "-",
+                    condition: this.isDamaged,
+                    value: connection.unsynced.lastAttack?.attack.damage,
+                },
+                {
+                    prefix: "+",
+                    condition: this.isHealed,
+                    value: connection.unsynced.lastAttack?.attack.heal,
+                },
+            ].find((e) => e.condition);
+
+            if (!effect) return null;
+
+            return `${effect.prefix}${effect.value}`;
+        },
+        isActiveCard(): boolean {
             return connection.state.activePlayerID === this.player?.id;
+        },
+        isCurrentPlayer(): boolean {
+            return (
+                this.isActiveCard &&
+                connection.currentPlayer?.id === this.player?.id
+            );
+        },
+        isNotCurrentPlayer(): boolean {
+            return this.isActiveCard == true && !this.isCurrentPlayer;
         },
         activeCard(): ICard | undefined {
             return this.player.activeCard;
@@ -68,9 +115,42 @@ export default Vue.extend({
     }
 }
 
-.is-active-player {
+@keyframes border-pulse {
+    25% {
+        border-color: var(--success);
+        border-left-color: #2c3e50;
+    }
+
+    50% {
+        border-color: var(--success);
+        border-top-color: #2c3e50;
+    }
+
+    75% {
+        border-color: var(--success);
+        border-right-color: #2c3e50;
+    }
+
+    100% {
+        border-color: var(--success);
+        border-bottom-color: #2c3e50;
+    }
+}
+
+.thinking {
+    animation: border-pulse 5.5s infinite;
+}
+
+.is-enemy {
+    border-color: var(--danger);
+    border-width: 5px;
+}
+.is-enemy:hover {
+    transform: scale(1.5);
+}
+
+.is-active-card {
     border: 5px solid var(--success);
-    animation: pulse 1.5s infinite;
 }
 
 .no-active-username {

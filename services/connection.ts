@@ -1,8 +1,6 @@
 import Vue from "vue";
 import { Client as ColyseusClient, Room } from "colyseus.js";
 import Swal from "sweetalert2";
-
-import audio from "~/services/audio";
 import { formPathFromPhase } from "~/services/utilities";
 
 const ROOM_NAME = "standard";
@@ -16,10 +14,13 @@ const connection = new Vue({
         return {
             room: undefined as Room<IRoom> | undefined,
             eventRegistered: false,
-            results: {} as Record<string, number>,
             unsynced: {
                 library: [] as ICard[],
                 uploadCredentials: null as Record<string,string> | null,
+                leaderboard: {} as Record<string, number>,
+                pointMetrics: [],
+                lastAttack: undefined as IAttackBroadcast | undefined,
+                disconnnected:undefined as string | undefined
             },
             state: {
                 phase: "WAITING",
@@ -119,22 +120,11 @@ const connection = new Vue({
                 }
             });
 
-            // Play sound when attacked:
-            this.room?.onMessage(
-                "attacked",
-                (_attackData: IAttackBroadcast) => {
-                    audio.damage.play();
-                    // Effects / Animations
-                }
-            );
-
             // Listen for results:
-            this.room?.onMessage(
-                "results",
-                (results: Record<string, number>) => {
-                    this.results = results;
-                }
-            );
+            this.room?.onMessage("leaderboardUpdate", (update) => {
+                this.unsynced.leaderboard = update.leaderboard;
+                this.unsynced.pointMetrics = update.pointMetrics;
+            });
 
             // Listen for timer resets:
             this.room?.onMessage("resetClock", (count: number) => {
@@ -150,6 +140,24 @@ const connection = new Vue({
             this.room?.onMessage("requestUploadCredentials", (creds: Record<string, string>) => {
                 this.unsynced.uploadCredentials = creds;
             });
+            // Game Over Alert:
+            this.room?.onMessage("gameOver", (r) => {
+                const winnerName = Object.entries(r)
+                    .sort((a, b) => (b[1] as number) - (a[1] as number))
+                    .map(([k]) => k)[0];
+                Swal.fire({
+                    title: "Game Over!",
+                    text: `The winner is ${winnerName}`,
+                    timer: 10000,
+                    icon: "success",
+                });
+            });
+
+            //Disconnnected from server
+            this.room?.onMessage("disconnect", (r)=>{
+                this.unsynced.disconnnected = r
+                this.room?.leave();
+            })
         },
         resetGameState() {
             try {
@@ -157,6 +165,7 @@ const connection = new Vue({
                 this.room?.leave();
                 this.eventRegistered = false;
                 this.room = undefined;
+                this.unsynced.disconnnected = undefined;
             } catch (error) {}
         },
     },

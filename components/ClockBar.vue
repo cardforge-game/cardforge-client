@@ -1,6 +1,6 @@
 <template>
     <div
-        v-if="formattedTime !== -1 && connection.room"
+        v-if="formattedTime !== -1 && connection.room && connection.room.state.phase !== 'FIGHTING'"
         class="clock-bar h1 bold"
     >
         {{ formattedTime }}
@@ -29,9 +29,12 @@ export default Vue.extend({
 
 <style scoped>
 .clock-bar {
-    background: var(--darker);
-    color: var(--light);
+    background: transparent;
+    color: var(--dark);
     padding: 1rem;
     text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    position: relative;
+    z-index: 5;
 }
 </style>

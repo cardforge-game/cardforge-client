@@ -37,7 +37,7 @@ declare interface IPlayer {
 declare interface IRoom {
     phase: PhaseT;
     players: Record<string, IPlayer>;
-    currentRound: number;
+    resultsShown: number;
     cardLibrary: ICard[];
     activePlayerID: string;
 }
@@ -70,3 +70,5 @@ declare interface UploadResponseError {
     message: string;
     fileId: string;
 }
+declare module "vue-chartkick"
+declare module "chart.js"
