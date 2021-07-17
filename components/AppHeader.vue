@@ -1,5 +1,13 @@
 <template>
-    <header>
+    <div v-if="connection.unsynced.disconnnected" class="disconnect-alert">
+        <p class="h6"><b class="h6">Disconnected:</b>{{connection.unsynced.disconnnected}}</p>
+        <a href="/">
+        <button style="--type: var(--primary)" class="selectable">
+            Leave
+        </button>
+        </a>
+    </div>
+    <header v-else>
         <a href="/">
             <img
                 v-if="!connection.room"
@@ -10,7 +18,6 @@
                 Leave
             </button>
         </a>
-
         <div class="right-side">
             <portal-target name="header"></portal-target>
         </div>
@@ -49,5 +56,20 @@ header {
 
 img {
     height: 3.25rem;
+}
+
+.disconnect-alert{
+    width:100vw;
+    color: var(--light);
+    background-color: var(--danger);
+    text-align: center;
+    height:5vh;
+    display:flex;
+    justify-content:space-evenly;
+    align-items: center;
+}
+
+.disconnect-alert p, .disconnect-alert b{
+    color: var(--light);
 }
 </style>

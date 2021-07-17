@@ -203,7 +203,7 @@ export default Vue.extend({
                     "Make it short, sweet, and representative of your greatness.",
                 showCancelButton: true,
                 inputValidator: (value) =>
-                    value.trim().length === 0 ? "Type in a username." : null,
+                    value.trim().length < 3 ? "Usernames must be at least three characters long." : null,
             });
 
             if (!(res.isDenied || res.isDismissed)) {
