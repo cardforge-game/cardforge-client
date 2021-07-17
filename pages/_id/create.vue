@@ -68,7 +68,7 @@
 
                         <div class="field">
                             <label>Card Image</label>
-                            <UploadInput :required="true" :onSuccess="uploadSuccess" :onError="uploadError"/>
+                            <UploadInput :required="false" :onSuccess="uploadSuccess" :onError="uploadError"/>
                         </div>
                     </div>
                 </div>
@@ -178,6 +178,22 @@ import Swal from "sweetalert2";
 import connection from "~/services/connection";
 import getExampleAttack from "~/services/exampleAttacks";
 
+function getBase64Image(imgURL: string) {
+    const img = new Image();
+    return new Promise((resolve, reject) => {
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+                ctx.drawImage(img, 0, 0);
+                const dataURL = canvas.toDataURL("image/png");
+                resolve(dataURL)
+            }
+            img.crossOrigin = 'Anonymous';
+            img.src = imgURL;
+        }) as Promise<string>;
+}
 export default Vue.extend({
     middleware: "validateGamePhase",
     computed: {
@@ -186,6 +202,7 @@ export default Vue.extend({
     data() {
         return {
             cardData: {
+                fileId:"",
                 name: "",
                 health: 10,
                 imgURL: "",
@@ -214,7 +231,7 @@ export default Vue.extend({
                 this.cardData = {...this.cardData,...card};
             });
 
-            connection.room.onMessage("cardAccepted", () => {
+            connection.room.onMessage("cardAccepted", async () => {
                 Swal.fire({
                     title: "Card Accepted!",
                     icon: "success",
@@ -231,7 +248,9 @@ export default Vue.extend({
                 const cache = JSON.parse(
                     (localStorage.getItem("cachedCards") as any) || "[]"
                 );
-
+                //Turn image into base64 for saving
+                this.cardData.fileId = ""
+                this.cardData.imgURL = await getBase64Image(this.cardData.imgURL)
                 localStorage.setItem(
                     "cachedCards",
                     JSON.stringify([...cache, this.cardData])
@@ -248,6 +267,7 @@ export default Vue.extend({
                     imgURL: "",
                     attacks: [],
                 };
+                connection.$emit("submit");
             });
         }
     },
@@ -270,6 +290,7 @@ export default Vue.extend({
         },
         loadCard(card: IPreviewCard) {
             this.cardData = JSON.parse(JSON.stringify(card));
+            connection.$emit("restore", this.cardData.imgURL)
         },
         deleteCard(i: number) {
             this.currentCache.splice(i, 1);

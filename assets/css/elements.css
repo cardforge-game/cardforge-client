@@ -1,5 +1,5 @@
 /* Button */
-button {
+.button, button {
     --type: var(--primary);
 
     background: var(--type);
@@ -17,13 +17,20 @@ button {
     border: 2px solid var(--type);
 }
 
-button.large {
+.buttion.large, button.large {
     font-size: 1.75rem;
 }
 
-button:hover,
-button:focus {
+.button:hover,button:hover,
+.button:focus,button:focus {
     border-color: var(--light);
+}
+
+.button.disabled,button:disabled,
+.button.disabled,button:disabled {
+    background-color:#b2bec3;
+    border-color: transparent !important;
+    cursor: not-allowed !important;
 }
 
 /* Button Group */
