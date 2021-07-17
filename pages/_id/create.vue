@@ -143,6 +143,7 @@
                                 <div class="field">
                                     <label>Attack Description</label>
                                     <textarea
+                                        @blur="previewCard"
                                         v-model.lazy="a.desc"
                                         maxlength="100"
                                         :placeholder="`${
@@ -166,18 +167,9 @@
                 </div>
 
                 <div v-if="cardData.name" class="subsection">
-                    <div class="button-group">
-                        <button
-                            type="button"
-                            style="--type: var(--primary)"
-                            @click="previewCard"
-                        >
-                            Preview Card
-                        </button>
-                        <button type="submit" style="--type: var(--success)">
+                    <button type="submit" style="--type: var(--success)">
                             Publish Card
-                        </button>
-                    </div>
+                    </button>
                 </div>
             </form>
         </section>
@@ -286,6 +278,7 @@ export default Vue.extend({
                     connection.state.resultsShown
                 )
             );
+            this.previewCard();
         },
     },
 });
