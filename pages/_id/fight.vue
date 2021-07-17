@@ -107,6 +107,7 @@ main {
     display: flex;
     align-items: center;
     left: 50%;
+    top:10%;
     transform: translateX(-50%);
     z-index: 5;
     background: var(--dark);
