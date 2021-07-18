@@ -12,6 +12,7 @@ let timerInterval = -1;
 const connection = new Vue({
     data() {
         return {
+            client,
             room: undefined as Room<IRoom> | undefined,
             eventRegistered: false,
             unsynced: {
@@ -54,10 +55,12 @@ const connection = new Vue({
     },
 
     methods: {
-        async createRoom(username: string) {
+        async createRoom(username: string,roomName: string,privateRoom:boolean) {
             try {
                 this.room = await client.create<IRoom>(ROOM_NAME, {
                     name: username,
+                    privateRoom,
+                    roomName,
                 });
 
                 this.initEvents();
@@ -81,6 +84,18 @@ const connection = new Vue({
                 this.initEvents();
                 return { success: true };
             } catch (error) {
+                return { success: false, error };
+            }
+        },
+
+        async quickJoin(name: string){
+            try{
+               this.room = await connection.client.joinOrCreate("standard", {
+                    name
+                })
+                this.initEvents();
+                return { success: true}
+            }catch (error) {
                 return { success: false, error };
             }
         },
@@ -160,6 +175,7 @@ const connection = new Vue({
                 this.room?.leave();
                 this.eventRegistered = false;
                 this.room = undefined;
+                this.time = -1;
                 this.unsynced.disconnnected = undefined;
             } catch (error) {}
         },

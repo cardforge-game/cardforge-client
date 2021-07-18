@@ -1,20 +1,11 @@
 <template>
     <main>
         <portal to="header">
-            <div class="button-group">
-                <button
-                    style="--type: var(--success)"
-                    @click="initGame('createGame')"
-                >
-                    Start Game
+            <nuxt-link to="menu">
+                <button style="--type: var(--success)">
+                    Play Now
                 </button>
-                <button
-                    style="--type: var(--primary)"
-                    @click="initGame('joinGame')"
-                >
-                    Join Game
-                </button>
-            </div>
+            </nuxt-link>
         </portal>
         <div class="grid banner">
             <section class="text-section">
@@ -193,57 +184,7 @@ export default Vue.extend({
     },
     mounted() {
         connection.resetGameState();
-    },
-    methods: {
-        async initGame(action: "createGame" | "joinGame") {
-            const res = await Swal.fire({
-                title: "Enter in a username.",
-                input: "text",
-                inputLabel:
-                    "Make it short, sweet, and representative of your greatness.",
-                showCancelButton: true,
-                inputValidator: (value) =>
-                    value.trim().length < 3 ? "Usernames must be at least three characters long." : null,
-            });
-
-            if (!(res.isDenied || res.isDismissed)) {
-                this[action](res.value);
-            }
-        },
-        async createGame(username: string) {
-            const creationResponse = await connection.createRoom(username);
-
-            if (creationResponse.success && connection.room) {
-                connection.temp.host = true;
-                this.$router.push(`/${connection.room?.id}`);
-            } else {
-                Swal.fire(
-                    "That didn't work.",
-                    `Unable to create a room.\nReason: ${creationResponse.error}`,
-                    "error"
-                );
-            }
-        },
-        async joinGame(username: string) {
-            const codePrompt = await Swal.fire({
-                title: "Enter in a room code.",
-                input: "text",
-                inputLabel: "An alphanumeric code.",
-                showCancelButton: true,
-                inputValidator: (value) =>
-                    value.trim().length === 0 ? "Type in a code." : null,
-            });
-
-            connection.temp.username = username;
-
-            if (
-                !(codePrompt.isDenied || codePrompt.isDismissed) &&
-                codePrompt.value
-            ) {
-                this.$router.push(`/${codePrompt.value}`);
-            }
-        },
-    },
+    }
 });
 </script>
 
