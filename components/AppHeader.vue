@@ -1,23 +1,24 @@
 <template>
     <div v-if="connection.unsynced.disconnnected" class="disconnect-alert">
         <p class="h6"><b class="h6">Disconnected:</b>{{connection.unsynced.disconnnected}}</p>
-        <a href="/">
+        <nuxt-link to="/menu">
         <button style="--type: var(--primary)" class="selectable">
             Leave
         </button>
-        </a>
+        </nuxt-link>
     </div>
     <header v-else>
-        <a href="/">
+       <nuxt-link to="/" v-if="!connection.room">
             <img
-                v-if="!connection.room"
                 src="~/assets/images/logo-header.png"
                 class="selectable"
             />
-            <button v-else style="--type: var(--danger)" class="selectable">
+       </nuxt-link>
+        <nuxt-link to="/menu" v-else>
+            <button style="--type: var(--danger)" class="selectable">
                 Leave
             </button>
-        </a>
+        </nuxt-link>
         <div class="right-side">
             <portal-target name="header"></portal-target>
         </div>

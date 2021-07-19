@@ -387,24 +387,6 @@ details .section {
     margin: 0 0.5rem;
 }
 
-.field {
-    margin: 1rem 0;
-}
-
-.inline-fields .field {
-    display: inline-block;
-    margin-right: 1rem;
-}
-
-.field label {
-    display: block;
-}
-
-.field textarea {
-    width: 30rem;
-    height: 5rem;
-}
-
 h3 {
     display: flex;
     align-items: center;
