@@ -28,6 +28,10 @@ const audio = {
         src: "/sounds/turn.webm",
         volume: 0.1,
     }),
+    attackScene: new Howl({
+        src: "/sounds/woosh.webm",
+        rate:0.9,
+    }),
     hover: {
         0: new Howl({
             src: "/sounds/hover0.ogg",
@@ -48,5 +52,5 @@ const audio = {
         },
     } as ISoundState,
 };
-(window as any).ss = audio;
+//(window as any).ss = audio;
 export default audio;
