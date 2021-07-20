@@ -7,7 +7,7 @@
             <input :disabled="loading" :required="required" type="file" ref="imageFile" @change="save" />
         </label>
         <input :disabled="loading" v-else v-model="url" :required="required" type="text" placeholder="imageurl.png"
-            @change="upload" />
+            @change="emmitChange" />
     </span>
 </template>
 
@@ -15,22 +15,51 @@
 import Vue from 'vue'
 import connection from "~/services/connection";
 
+const toBase64 = (file:File):Promise<string | ArrayBuffer | null> => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+})
+
 export default Vue.extend({
     mounted(){ 
-        this.refreshCreds() 
+        this.refreshCreds()
         connection.$on("restore",(imgURL: string)=>{
-            this.url = imgURL;
-            this.upload();
+            try{
+             let arr = imgURL.split(',');
+             const match = arr[0].match(/:(.*?);/)
+             if(!match) return;
+             const mime = match[1]
+             const bstr = atob(arr[1])
+             let n = bstr.length
+             const u8arr = new Uint8Array(n);
+             while (n--) {
+                 u8arr[n] = bstr.charCodeAt(n);
+             }
+             const file = new Blob([u8arr], {
+                 type: mime
+             }) as File
+            this.file = file;
+            }catch(e){
+                console.log("Failed to restore")
+                console.log(e)
+            }
         })
         connection.$on("submit",()=>{
             this.url = "";
             this.file = null;
             this.isFile = true;
         })
+        
+        connection.$on("upload",()=>{
+            this.upload()
+        })
     },
     beforeDestroy(){ 
         connection.$off("restore")
         connection.$off("submit")
+        connection.$off("upload")
     },
     props:{
         onError: { type: Function, required: true},
@@ -59,8 +88,11 @@ export default Vue.extend({
             const file = fileElement.files[0]
             this.file = file
 
-            this.upload()
+            this.emmitChange()
             
+        },
+        async emmitChange(){
+            connection.$emit("imageChanged",(this.file && this.isFile) ? await toBase64(this.file) : this.url)
         },
         async upload(){
             if((!this.file && !this.urlEndpoint) || !connection.room) return;

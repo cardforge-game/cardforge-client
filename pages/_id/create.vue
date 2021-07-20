@@ -37,7 +37,7 @@
             </details>
         </section>
         <section class="section">
-            <form @submit.prevent="publishCard">
+            <form @submit.prevent="uploadCard">
                 <div class="subsection">
                     <h3 class="bold">Card Stats</h3>
 
@@ -163,7 +163,7 @@
                 </div>
 
                 <div v-if="cardData.name" class="subsection">
-                    <button type="submit" style="--type: var(--success)">
+                    <button type="submit" style="--type: var(--success)" :disabled="isUploading">
                             Publish Card
                     </button>
                 </div>
@@ -178,22 +178,6 @@ import Swal from "sweetalert2";
 import connection from "~/services/connection";
 import getExampleAttack from "~/services/exampleAttacks";
 
-function getBase64Image(imgURL: string) {
-    const img = new Image();
-    return new Promise((resolve, reject) => {
-            img.onload = () => {
-                const canvas = document.createElement("canvas");
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-                ctx.drawImage(img, 0, 0);
-                const dataURL = canvas.toDataURL("image/png");
-                resolve(dataURL)
-            }
-            img.crossOrigin = 'Anonymous';
-            img.src = imgURL;
-        }) as Promise<string>;
-}
 export default Vue.extend({
     middleware: "validateGamePhase",
     computed: {
@@ -201,6 +185,7 @@ export default Vue.extend({
     },
     data() {
         return {
+            isUploading:false,
             cardData: {
                 fileId:"",
                 name: "",
@@ -215,6 +200,10 @@ export default Vue.extend({
         };
     },
     mounted() {
+        connection.$on("imageChanged",(url:string)=>{
+        this.cardData.imgURL = url
+        })
+
         if (!connection.eventRegistered && connection.room) {
             this.cardData.health = (connection.state.resultsShown || 1) * 10;
             Swal.fire(
@@ -228,10 +217,11 @@ export default Vue.extend({
             // connection.eventRegistered = true;
 
             connection.room.onMessage("previewCard", (card: IPreviewCard) => {
-                this.cardData = {...this.cardData,...card};
+                this.cardData = {...this.cardData,...card,imgURL:this.cardData.imgURL};
             });
 
             connection.room.onMessage("cardAccepted", async () => {
+                this.isUploading = false
                 Swal.fire({
                     title: "Card Accepted!",
                     icon: "success",
@@ -250,7 +240,6 @@ export default Vue.extend({
                 );
                 //Turn image into base64 for saving
                 this.cardData.fileId = ""
-                this.cardData.imgURL = await getBase64Image(this.cardData.imgURL)
                 localStorage.setItem(
                     "cachedCards",
                     JSON.stringify([...cache, this.cardData])
@@ -271,22 +260,29 @@ export default Vue.extend({
             });
         }
     },
+    beforeDestroy(){
+        connection.$off("imageChanged")
+    },
     methods: {
         uploadSuccess(res:UploadResponse){
-            console.log(res)
-            this.cardData.imgURL = res.url
             this.cardData.fileId = res.fileId
+            this.publishCard()
         },
         uploadError(err:UploadResponseError){
+            this.isUploading = false
             this.cardData.imgURL = ""
             this.cardData.fileId = ""
             Swal.fire({icon:"error",text:err.message})
         },
+        uploadCard(){
+            this.isUploading = true
+            connection.$emit("upload")
+        },
         publishCard() {
-            connection.room?.send("submitCard", this.cardData);
+            connection.room?.send("submitCard", {...this.cardData,imgURL:""});
         },
         previewCard() {
-            connection.room?.send("previewCard", this.cardData);
+            connection.room?.send("previewCard", {...this.cardData,imgURL:""});
         },
         loadCard(card: IPreviewCard) {
             this.cardData = JSON.parse(JSON.stringify(card));
