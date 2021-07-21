@@ -42,7 +42,7 @@ export default Vue.extend({
     async mounted() {
         connection.redirect = (path: string) => this.$router.push(path);
 
-        if (connection.temp.host) {
+        if (connection.currentPlayer?.host) {
             // If the user created the room:
 
             Swal.fire(
@@ -52,36 +52,7 @@ export default Vue.extend({
                     "(The game needs at least 3 players, up to 8 players, more the better!)",
                 "success"
             );
-        } else if (connection.temp.username.length > 0) {
-            // Someone is joining via the homepage:
-
-            const joinResponse = await connection.joinRoom(
-                connection.temp.username,
-                this.id.trim()
-            );
-
-            connection.temp = {
-                host: false,
-                username: "",
-            };
-
-            if (joinResponse.success) {
-                Swal.fire(
-                    "You're all set!",
-                    "Send this link to get more friends in the game, between 3-8 players are allowed. " +
-                        "The person that created the game will start it when they see fit, have fun!",
-                    "success"
-                );
-            } else {
-                Swal.fire(
-                    "Hmm...",
-                    `Unable to join this room (code ${this.id.trim()}).Reason: ${
-                        joinResponse.error
-                    }`,
-                    "error"
-                );
-            }
-        } else {
+        } else if(!connection.currentPlayer) {
             // Someone is joining with a direct link:
 
             const res = await Swal.fire({
@@ -91,15 +62,16 @@ export default Vue.extend({
                     "Make it short, sweet, and representative of your greatness.",
                 showCancelButton: true,
                 inputValidator: (value) =>
-                    value.trim().length === 0 ? "Type in a code." : null,
+                    value.trim().length < 3 ? "Usernames must be at least three characters long." : null,
             });
 
             if (res.isDenied || res.isDismissed) {
-                return this.$router.push("/");
+                return this.$router.push("/menu");
             }
 
-            await connection.joinRoom(res.value.trim(), this.id.trim());
-
+            const connected = await connection.joinRoom(res.value.trim(), this.id.trim());
+            if(!connected.success) connection.unsynced.disconnnected = "That room code does not exist or has already been expired"
+            
             connection.temp = {
                 host: false,
                 username: "",

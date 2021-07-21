@@ -7,7 +7,7 @@
                 <h1 class="section-header shop">Card Shop 🛒</h1>
                 <div class="card-container">
                     <div
-                        v-for="(c, i) in connection.unsynced.library"
+                        v-for="(c, i) in formattedLibary"
                         :key="`card-${i}`"
                         class="card-item"
                     >
@@ -97,6 +97,9 @@ export default Vue.extend({
         connection() {
             return connection;
         },
+        formattedLibary(){
+            return connection.unsynced.library.reverse()
+        }
     },
     mounted() {
         Swal.fire(

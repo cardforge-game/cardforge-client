@@ -12,6 +12,11 @@
                 />
             </div>
         </div>
+        <div  @animationstart="playAttackScene" v-if="lastAttack" class="attack-scene" :style="`background-image:url('${lastAttackerImage}')`">
+            <h1 class="attack-title h1 bold">
+                  {{lastAttack.name}}
+            </h1>
+        </div>
         <div class="row top">
             <TableTopCard
                 v-for="(n, i) in 5"
@@ -42,7 +47,7 @@
 <script lang="ts">
 import Vue from "vue";
 import connection from "~/services/connection";
-
+import audio from "~/services/audio"
 export default Vue.extend({
     data() {
         return {
@@ -79,8 +84,21 @@ export default Vue.extend({
                 transform: rotateY(${this.showCardDialog ? -15 : -90}deg);
             `;
         },
+        lastAttack():IAttack | undefined {
+            return connection.unsynced.lastAttack?.attack
+        },
+        lastAttackerImage():string | undefined {
+             const id = connection.unsynced.lastAttack?.attacker
+             if(!id) return undefined
+             if(!connection.state.players[id].activeCard) return undefined
+             return connection.state.players[id].activeCard.imgURL
+        }
+
     },
     methods: {
+        playAttackScene() {
+            audio.attackScene.play()
+        },
         onCardClick(index: number) {
             const player: IPlayer = this.displayPlayers[index];
 
@@ -179,5 +197,70 @@ export default Vue.extend({
     .row.bottom .card:last-of-type {
         --rotate: -45deg;
     }
+}
+.attack-scene{
+    position:fixed;
+    top:30vh;
+    height:30vh;
+    text-align:left;
+    padding: 1rem 2rem;
+    width:100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size:cover;
+    animation: intro 1.3s linear forwards;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.attack-title{
+    display:flex;
+    height:100%;
+    font-size: 1.5rem;
+    justify-content:center;
+    align-items:center;
+    color: var(--light);
+    font-size:8rem;
+    animation: attack-title 1.5s ease-in-out forwards;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,1px 1px 0 #000;
+}
+
+@keyframes intro{
+    0%{
+        transform:scaleY(0);
+        background-position:0% -10%;
+    }
+    15%{
+        transform:scaleY(1);
+        background-position:0% 50%;
+    }
+    80%{
+        transform:scaleY(1);
+        background-position:0% 50%;
+    }
+    100%{
+         transform:scaleY(0);
+        background-position:0% -10%;
+    }
+
+}
+
+@keyframes attack-title{
+    0%{
+      transform:translateX(-10%);
+      opacity:0
+    }
+    10%{
+        opacity: 0;
+    }
+    20%{
+        opacity: 1;
+    }
+    80%{
+        opacity: 1;
+    }
+    100%{
+        transform:translateX(5%);
+    }
+
 }
 </style>

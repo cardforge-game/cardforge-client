@@ -6,7 +6,7 @@
 
         <div class="deck">
             <Card
-                v-for="(card, i) in connection.currentPlayer.deck"
+                v-for="(card, i) in connection.currentPlayer.combatHand"
                 :key="i"
                 :card="card"
                 :size="15"

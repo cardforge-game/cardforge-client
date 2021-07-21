@@ -1,6 +1,6 @@
 <template>
     <div
-        v-if="formattedTime !== -1 && connection.room"
+        v-if="formattedTime !== -1 && connection.room && connection.room.state.phase !== 'FIGHTING'"
         class="clock-bar h1 bold"
     >
         {{ formattedTime }}
@@ -17,7 +17,7 @@ export default Vue.extend({
             return connection;
         },
         formattedTime() {
-            if (connection.time === -1) return -1;
+            if (connection.time <= -1) return -1;
             const totalSeconds = connection.time / 1000;
             const minutes = (totalSeconds / 60).toString().split(".")[0];
             const seconds = (totalSeconds % 60).toString().split(".")[0];
