@@ -62,6 +62,7 @@
                                 type="number"
                                 placeholder="10"
                                 min="1"
+                                @blur="previewCard"
                                 required
                             />
                         </div>
@@ -192,6 +193,7 @@ export default Vue.extend({
                 health: 10,
                 imgURL: "",
                 attacks: [],
+                modifiers:[]
             } as IPreviewCard,
             acceptedCards: 0,
             currentCache: JSON.parse(
@@ -213,6 +215,7 @@ export default Vue.extend({
             // connection.eventRegistered = true;
 
             connection.room.onMessage("previewCard", (card: IPreviewCard) => {
+                console.log(card)
                 this.cardData = card;
             });
 
@@ -248,6 +251,7 @@ export default Vue.extend({
                     health: 10,
                     imgURL: "",
                     attacks: [],
+                    modifiers:[]
                 };
             });
         }

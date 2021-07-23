@@ -12,11 +12,20 @@ declare interface IAttack {
     desc: string;
 }
 
+declare interface Modifier{
+    modifyingAttribute: string
+    item: string;
+    subject: string;
+    action: string;
+    errors:string[];
+}
+
 declare interface IPreviewCard {
     name: string;
     health: number;
     imgURL: string;
     attacks: IAttack[];
+    modifiers: Modifier[];
 }
 
 declare interface ICard extends IPreviewCard {
