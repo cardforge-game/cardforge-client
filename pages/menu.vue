@@ -2,56 +2,72 @@
   <main>
       <section class="menu-panel">
           <h1 class="h1 bold">Public Games</h1>
-          <input v-model="filterName" placeholder="Filter by Name..."/>
-          <button @click="refreshGames">Refresh</button>   
-          <button @click="quickJoin" style="--type: var(--success)">Quick Join</button> 
+          <input v-model="filterName" placeholder="Filter by Name..." />
+          <button @click="refreshGames">Refresh</button>
           <br><br>
-          <div class="list">
-              <p v-if="error" class="bold" style="color:var(--danger)">Connection Error:{{error}}</p>
-              <p v-else-if="loading">Connecting to the server...</p>
-              <p v-else-if="games.length === 0">No public games! Try making a new game or find players in our <a target="_blank" href="https://discord.gg/Sp88DPedwh">discord server!</a></p>
-              <p v-else-if="filterName.length > 0 && filteredGames.length === 0">No rooms with name "{{filterName}}"</p>
-              <div class="gamelisting" v-else v-for="(game) in filteredGames" :key="game.roomId">
-                  <h5 class="h5">{{game.metadata.roomName}}</h5>
-                  <span>{{game.metadata.region}}</span>
-                  <span class="bold">{{game.clients}}/{{game.maxClients}}</span>
-                  <button style="--type: var(--success)" @click="joinRoom(game.roomId)">Join</button>
-              </div>       
+          <div class="gamelisting">
+              <table>
+                  <tr>
+                      <th>Room Name</th>
+                      <th>Region</th>
+                      <th>Players</th>
+                      <th>Join</th>
+                  </tr>
+                  <!--ERRORS-->
+                  <p v-if="error" class="bold" style="color:var(--danger)">Connection Error:{{error}}</p>
+                  <p v-else-if="loading">Connecting to the server...</p>
+                  <p v-else-if="games.length === 0">No public games! Try making a new game or find players in our <a
+                          target="_blank" href="https://discord.gg/Sp88DPedwh">discord server!</a></p>
+                  <p v-else-if="filterName.length > 0 && filteredGames.length === 0">No rooms with name "{{filterName}}"
+                  </p>
+                  <!-- END ERRORS -->
+                  <tr v-for="(game) in filteredGames" :key="game.roomId">
+                      <td>{{game.metadata.roomName}}</td>
+                      <td>{{game.metadata.region}}</td>
+                      <td class="bold">{{game.clients}}/{{game.maxClients}}</td>
+                      <td><button style="--type: var(--success)" @click="joinRoom(game.roomId)">Join</button></td>
+                  </tr>
+              </table>
+          </div>
+
+      </section>
+      <section class="menu-panel">
+          <h1 class="h1 bold">{{(create) ? "Create" : "Join"}} A Game</h1>
+          <p class="toggle" @click="create = !create">{{(create) ? "Join" : "Create"}} a Game</p>
+          <br><br>
+          <div class="form-dev">
+              <form @submit.prevent="handleSubmit">
+                  <div class="field">
+                      <label class="bold">Nickname</label>
+                      <input class="fullwidth" minlength="3" maxlength="15" required v-model="name" />
+                  </div>
+                  <div class="field" v-if="!create && hasCode">
+                      <label class="bold">Room Code</label>
+                      <input class="fullwidth" required v-model="roomCode" />
+                  </div>
+                  <div class="field" v-if="create">
+                      <label class="bold">Room Name</label>
+                      <input class="fullwidth" minlength="3" required v-model="roomName" />
+                  </div>
+                  <div class="field" v-if="create">
+                      <label class="bold">Private Game</label>
+                      <input type="checkbox" v-model="privateRoom" />
+                  </div>
+                  <br><br>
+                  <button v-if="hasCode || create" type="submit">{{(create) ? "Create" : "Join"}}</button>
+                  <button v-else type="submit">Quick Join</button>
+                  <p v-if="!create" class="toggle" @click="hasCode = !hasCode">{{(hasCode) ? "Join without" : "I have"}} a code</p>
+              </form>
           </div>
       </section>
       <section class="menu-panel">
-           <h1 class="h1 bold">{{(create) ? "Create" : "Join"}} A Game</h1>
-           <p class="toggle" @click="create = !create">{{(create) ? "Join" : "Create"}} a Game</p>
-           <br><br>
-           <div class="form-dev">
-               <form @submit.prevent="handleSubmit">
-                   <div class="field">
-                       <label class="bold">Username</label>
-                       <input class="fullwidth" minlength="3" required v-model="name" />
-                   </div>
-                   <div class="field" v-if="!create">
-                       <label class="bold">Room Code</label>
-                       <input class="fullwidth" required v-model="roomCode" />
-                   </div>
-                   <div class="field" v-if="create">
-                       <label class="bold">Room Name</label>
-                       <input class="fullwidth" minlength="3" required v-model="roomName" />
-                   </div>
-                   <div class="field" v-if="create">
-                       <label class="bold">Private Game</label>
-                       <input type="checkbox" v-model="privateRoom" />
-                   </div>
-                   <button style="--type: var(--success)" type="submit">{{(create) ? "Create" : "Join"}}</button>
-               </form>
-               <div class="dev-notice">
-                   <h3 class="h3">News</h3>
-                   <br><br>
-                   <div class="dev-notice-content">
-                   <p>To keep up with the latest information on the development of CardForge, check our server!</p>
-                   <a target="_blank" href="https://discord.gg/Sp88DPedwh"><button style="--type: var(--secondary)">Discord Server</button></a>
-                   </div>   
-               </div>
-           </div>
+          <h1 class="h1 bold">News</h1>
+          <br><br>
+          <div class="dev-notice-content">
+              <p>To keep up with the latest information on the development of CardForge, check our server!</p>
+              <a target="_blank" href="https://discord.gg/Sp88DPedwh"><button style="--type: var(--secondary)">Discord
+                      Server</button></a>
+          </div>
       </section>
   </main>
 </template>
@@ -73,6 +89,7 @@ export default Vue.extend({
         },
         data() {
             return {
+                hasCode:false as boolean,
                 error:undefined as string| undefined,
                 create:false,
                 loading: true,
@@ -99,6 +116,8 @@ export default Vue.extend({
             async handleSubmit(){
                 if(this.create){
                     await connection.createRoom(this.name, this.roomName, this.privateRoom)
+                }else if(!this.hasCode){
+                    this.quickJoin()
                 }else{
                     await connection.joinRoom(this.name,this.roomCode)
                 }
@@ -135,11 +154,14 @@ export default Vue.extend({
 <style scoped>
 main {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1.5fr 1fr;
     grid-template-rows: 1fr;
-    margin-top: 10vh;
     padding: 0 5rem;
-    column-gap: 5rem;
+    column-gap: 2rem;
+    row-gap: 2rem;
+    padding-top: 10vh;
+    background:  url('~assets/images/bg.webp');
+    background-size:cover;
 }
 .form-dev{
     display:grid;
@@ -158,28 +180,18 @@ form{
 form .field{
     width:40%;
 }
-.list{
-    text-align: center;
-    overflow-y: scroll;
-    max-height:70vh;
-}
+
 .toggle{
     text-decoration: underline;
     cursor: pointer;
     color:var(--primary);
     user-select: none;
 }
-.gamelisting{
-    margin: 0.5rem 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-}
 
 .menu-panel{
     width:100%;
     height:80vh;
-    background-color: var(--theme-dark);
+    background-color: #eae0d79f;
     padding: 2rem 1rem;
 }
 
@@ -188,11 +200,39 @@ form .field{
     padding: 0 0.5rem;
 }
 
+.gamelisting{
+    max-height: 65vh;
+    overflow-y: scroll;
+}
+
+table {
+    width:100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+th{
+    font-weight: bold;
+}
+
+td, th {
+  text-align: left;
+  padding: 8px;
+}
+
+tr{
+    background-color: var(--theme);
+}
+
+tr:nth-child(even) {
+  background-color: var(--theme-dark);
+}
+
 @media only screen and (max-width: 768px) {
     main {
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-        padding: 0 1rem;
+        grid-template-rows: 1fr 2fr 1fr;
+        padding: 20vh 1rem;
     }
 
     .list {

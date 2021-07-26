@@ -173,7 +173,6 @@ export default Vue.extend({
             // connection.eventRegistered = true;
 
             connection.room.onMessage("previewCard", (card: IPreviewCard) => {
-                console.log(card)
                 this.cardData = card;
             });
 

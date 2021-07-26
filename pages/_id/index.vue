@@ -8,7 +8,7 @@
                 <div class="text">
                     <span class="lead">You are the host! 👑</span>
                     <div v-if="connection.room" class="code-display">
-                        <b>Code:</b> {{ connection.room.id }}
+                        <b>Code:</b> <span class="hidden">{{ connection.room.id }}</span>
                     </div>
                 </div>
                 <button style="--type: var(--success)" @click="startGame">
@@ -98,10 +98,19 @@ main {
 .info-sidebar .text {
     text-align: right;
 }
-.info-sidebar .text * {
+span,b,p{
     color: var(--light);
 }
 .info-sidebar button {
     margin: 0 0.5rem;
+}
+
+.hidden{
+   color: transparent;
+   text-shadow: 0 0 6px rgba(255,255,255,1);
+   transition: color 0.25s ease-in-out;
+}
+.hidden:hover{
+   color: var(--light);
 }
 </style>
