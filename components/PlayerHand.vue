@@ -1,8 +1,18 @@
 <template>
     <footer>
-        <span v-if="!connection.currentPlayer.activeCard" class="help-text">
-            Click on a card from your hand to play it!
-        </span>
+
+        <transition name="help">
+            <span class="help-text h4 bold" v-if="pickCard">
+                Click on a card from your hand to play it!
+            </span>
+        </transition>
+
+        <transition name="help">
+            <span class="help-text h4 bold" v-if="attacking">
+                Click on an enemy card to attack them!
+            </span>
+        </transition>
+        
 
         <div class="deck">
             <Card
@@ -29,6 +39,12 @@ export default Vue.extend({
         connection() {
             return connection;
         },
+        pickCard(){
+            return (connection.currentPlayer && connection.room && !connection.currentPlayer.activeCard && connection.currentPlayer.combatHand.length > 0)
+        },
+        attacking() {
+            return (connection.room && connection.room.state.activePlayerID === connection.currentPlayer?.id)
+        }
     },
     methods: {
         playHoverSound() {
@@ -50,8 +66,30 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.help-enter-active {
+    animation: slide-up .75s;
+}
+.help-leave-active {
+    animation: slide-up .75s reverse;
+}
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform:translateX(-50%) translateY(200%);
+    }
+    to{
+        opacity: 1;
+        transform:translateX(-50%) translateY(-200%);
+    }
+  }
+  
 .help-text {
+    z-index:2;
     color: var(--light);
+    position: absolute;
+    left:50%;
+    transform:translateX(-50%) translateY(-200%);
+    text-align:center;
 }
 
 footer {
