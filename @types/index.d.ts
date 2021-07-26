@@ -38,6 +38,7 @@ declare interface IPlayer {
     name: string;
     money: number;
     deck: ICard[];
+    combatHand: ICard[];
     activeCard: ICard; // index of Player.deck
     host: boolean;
 }
