@@ -2,6 +2,7 @@
     <div id="root">
         <AppHeader />
         <ClockBar />
+        <CardOverlay />
         <Nuxt />
     </div>
 </template>

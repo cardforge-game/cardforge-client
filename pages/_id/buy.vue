@@ -22,6 +22,8 @@
                             :size="15"
                             :shadow="false"
                             @click="buyCard(c.id)"
+                            @mouseenter="showOverlay(c)"
+                            @mouseleave="hideOverlay"
                         />
                     </div>
                 </div>
@@ -42,6 +44,8 @@
                             :size="15"
                             :shadow="false"
                             @click="addToDeck(i)"
+                            @mouseenter="showOverlay(c)"
+                            @mouseleave="hideOverlay"
                         />
                     </div>
                 </div>
@@ -70,6 +74,8 @@
                             :size="15"
                             :shadow="false"
                             @click="addToInv(i)"
+                            @mouseenter="showOverlay(c)"
+                            @mouseleave="hideOverlay"
                         />
                     </div>
                 </div>
@@ -112,17 +118,26 @@ export default Vue.extend({
     },
     methods: {
         buyCard(id: string) {
+            this.hideOverlay()
             connection.room?.send("buyCard", { id });
             audio.buy.play();
         },
         addToDeck(index: number) {
+            this.hideOverlay()
             connection.room?.send("addCardToDeck", { index });
             audio.changeCard.play();
         },
         addToInv(index: number) {
+            this.hideOverlay()
             connection.room?.send("addCardToInventory", { index });
             audio.changeCard.play();
         },
+        showOverlay(card:ICard){
+            connection.$emit("showOverlay",card)
+        },
+        hideOverlay(){
+            connection.$emit("hideOverlay")
+        }
     },
 });
 </script>
