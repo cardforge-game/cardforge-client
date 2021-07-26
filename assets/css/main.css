@@ -112,3 +112,36 @@ input:focus,textarea:focus {
 	border-radius: 10px;
 	background-color: var(--dark);
 }
+
+.point-info {
+    background-color: var(--theme-dark);
+    text-align: center;
+    margin: 0 auto;
+    padding: 2rem 4rem;
+}
+
+.point-info p {
+    text-align: center;
+}
+
+.point-info h3 {
+    font-size: 2rem;
+}
+
+.point-info p {
+    font-size: 1.5rem;
+}
+
+.point-info b {
+    font-size: 2.5rem;
+}
+
+@media only screen and (max-width: 640px) {
+    .point-info h3 {
+        font-size: 1rem;
+    }
+
+    .point-info b {
+        font-size: 1.5rem;
+    }
+}

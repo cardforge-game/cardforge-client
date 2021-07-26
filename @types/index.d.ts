@@ -12,11 +12,20 @@ declare interface IAttack {
     desc: string;
 }
 
+declare interface Modifier{
+    modifyingAttribute: string
+    item: string;
+    subject: string;
+    action: string;
+    errors:string[];
+}
+
 declare interface IPreviewCard {
     name: string;
     health: number;
     imgURL: string;
     attacks: IAttack[];
+    modifiers: Modifier[];
 }
 
 declare interface ICard extends IPreviewCard {
@@ -29,6 +38,7 @@ declare interface IPlayer {
     name: string;
     money: number;
     deck: ICard[];
+    combatHand: ICard[];
     activeCard: ICard; // index of Player.deck
     host: boolean;
 }

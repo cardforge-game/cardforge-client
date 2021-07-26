@@ -5,28 +5,30 @@
             <br />
             <div class="leaderboard-content">
                 <div>
-                    <p
-                        v-for="(player, i) in results"
-                        :key="i"
-                        class="leaderboard-listing"
-                    >
+                    <p v-for="(player, i) in results" :key="i" class="leaderboard-listing">
                         <b class="h5">{{
                             player.name.charAt(0).toUpperCase() +
                             player.name.slice(1)
-                        }}</b
-                        ><br />
+                        }}</b><br />
                         <span class="h5">{{ player.points }} points</span>
                     </p>
                 </div>
                 <div>
                     <h4 class="h4">Points by round</h4>
-                    <line-chart
-                        xtitle="Round"
-                        ytitle="Points"
-                        :data="pointMetrics"
-                    ></line-chart>
+                    <line-chart xtitle="Round" ytitle="Points" :data="pointMetrics"></line-chart>
                 </div>
             </div>
+        </div>
+        <br><br>
+        <div class="point-info">
+            <h3>
+                When you knockout an opponent in battle, you earn <b>2</b> points
+            </h3>
+            <h3>
+                When a player purchases a card you designed, you earn <b>1</b> point
+            </h3>
+            <br><br>
+            <p> Player with the most points wins!</p>
         </div>
     </main>
 </template>
@@ -59,33 +61,42 @@ export default Vue.extend({
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
 }
+
 .leaderboard-listing {
     text-align: left;
     padding: 0vw 5vw;
 }
+
 .leaderboard-listing b {
     background-color: var(--primary);
     border-radius: 10px;
     padding: 0rem 1rem;
     color: white;
 }
+
 main {
     padding: 0rem 8rem;
 }
+
 .h5 {
     line-height: 3rem;
 }
+
 .leaderboard {
     text-align: center;
     padding: 4vw 20vw;
 }
+
 .leaderboard-name {
     font-size: 1.25rem;
     line-height: 1.75rem;
 }
+
 .leaderboard li {
     text-align: left;
 }
+
+
 @media only screen and (max-width: 640px) {
     .leaderboard {
         padding: 0vw 5vw;

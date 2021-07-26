@@ -8,8 +8,11 @@
             </h1>
             <br />
             <p v-if="cardData.cardCost" class="h6 cost">
-                Other players can by this card at:
+                Other players can buy this card at:
                 <b>${{ cardData.cardCost }}</b>
+                <br>
+                When a player purchases a card you designed, you earn <span class="bold">1</span> point
+            
             </p>
             <Card :size="30" :card="cardData" :show-details="true" />
 
@@ -44,35 +47,20 @@
                     <div class="attack-form inline-fields">
                         <div class="field">
                             <label>Card Name</label>
-                            <input
-                                v-model="cardData.name"
-                                :class="{
+                            <input v-model="cardData.name" :class="{
                                     attention: cardData.name.length <= 0,
-                                }"
-                                placeholder="Lord of Darkness"
-                                maxlength="24"
-                                required
-                            />
+                                }" placeholder="Lord of Darkness" maxlength="24" required />
                         </div>
 
                         <div class="field">
                             <label>Card Health</label>
-                            <input
-                                v-model.number="cardData.health"
-                                type="number"
-                                placeholder="10"
-                                min="1"
-                                required
-                            />
+                            <input v-model.number="cardData.health" type="number" placeholder="10" min="1"
+                                @blur="previewCard" required />
                         </div>
 
                         <div class="field">
                             <label>Card Image URL</label>
-                            <input
-                                v-model="cardData.imgURL"
-                                placeholder="link.jpg"
-                                required
-                            />
+                            <input v-model="cardData.imgURL" placeholder="link.jpg" required />
                         </div>
                     </div>
                 </div>
@@ -80,40 +68,27 @@
                 <div class="subsection">
                     <h3 class="bold">
                         Card Attacks
-                        <button
-                            v-if="cardData.attacks.length < 3 && cardData.name"
-                            style="--type: var(--success)"
+                        <button v-if="cardData.attacks.length < 3 && cardData.name" style="--type: var(--success)"
                             @click="
                                 cardData.attacks.push({
                                     name: '',
                                     desc: '',
                                 })
-                            "
-                        >
+                            ">
                             Add Attack ⚔️
                         </button>
                     </h3>
 
-                    <p
-                        v-if="cardData.attacks.length === 0 && cardData.name"
-                        class="field"
-                    >
+                    <p v-if="cardData.attacks.length === 0 && cardData.name" class="field">
                         You have no attacks setup! Click "Add Attack"
                     </p>
                     <p v-else-if="!cardData.name" class="field">
                         Start creating a card by typing a name!
                     </p>
                     <div v-if="cardData.name">
-                        <details
-                            v-for="(a, i) in cardData.attacks"
-                            :key="`attackCardCreation-${i}`"
-                            open
-                            class="attack-form"
-                        >
-                            <summary
-                                v-if="a.name.length > 0"
-                                class="h4 section"
-                            >
+                        <details v-for="(a, i) in cardData.attacks" :key="`attackCardCreation-${i}`" open
+                            class="attack-form">
+                            <summary v-if="a.name.length > 0" class="h4 section">
                                 {{ a.name }}
                             </summary>
                             <summary v-else class="h4 placeholder section">
@@ -122,36 +97,20 @@
                             <div class="section">
                                 <div class="field">
                                     <label>Attack Name</label>
-                                    <input
-                                        v-model="a.name"
-                                        placeholder="Slap"
-                                        maxlength="20"
-                                        required
-                                        :class="{
+                                    <input v-model="a.name" placeholder="Slap" maxlength="20" required :class="{
                                             attention: a.name.length <= 0,
-                                        }"
-                                    />
-                                    <button
-                                        type="button"
-                                        class="inline-block"
-                                        @click="setExampleAttack(i)"
-                                    >
+                                        }" />
+                                    <button type="button" class="inline-block" @click="setExampleAttack(i)">
                                         🎲
                                     </button>
                                 </div>
 
                                 <div class="field">
                                     <label>Attack Description</label>
-                                    <textarea
-                                        @blur="previewCard"
-                                        v-model.lazy="a.desc"
-                                        maxlength="100"
-                                        :placeholder="`${
+                                    <textarea @blur="previewCard" v-model.lazy="a.desc" maxlength="100" :placeholder="`${
                                             cardData.name || 'someone'
-                                        } slaps the enemy dealing 10 damage!`"
-                                        required
-                                    />
-                                </div>
+                                        } slaps the enemy dealing 10 damage!`" required />
+                                    </div>
 
                                 <div class="field">
                                     <button
@@ -192,6 +151,7 @@ export default Vue.extend({
                 health: 10,
                 imgURL: "",
                 attacks: [],
+                modifiers:[]
             } as IPreviewCard,
             acceptedCards: 0,
             currentCache: JSON.parse(
@@ -213,6 +173,7 @@ export default Vue.extend({
             // connection.eventRegistered = true;
 
             connection.room.onMessage("previewCard", (card: IPreviewCard) => {
+                console.log(card)
                 this.cardData = card;
             });
 
@@ -245,9 +206,10 @@ export default Vue.extend({
 
                 this.cardData = {
                     name: "",
-                    health: 10,
+                    health: (connection.state.resultsShown || 1) * 10,
                     imgURL: "",
                     attacks: [],
+                    modifiers:[]
                 };
             });
         }
@@ -331,7 +293,7 @@ details .section {
 
 .card {
     text-align: left;
-    display: inline-flex;
+    display: inline-block;
 }
 
 .previous-card {
