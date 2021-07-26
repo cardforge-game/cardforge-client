@@ -7,7 +7,8 @@
           <button @click="quickJoin" style="--type: var(--success)">Quick Join</button> 
           <br><br>
           <div class="list">
-              <p v-if="loading">Connecting to the server...</p>
+              <p v-if="error" class="bold" style="color:var(--danger)">Connection Error:{{error}}</p>
+              <p v-else-if="loading">Connecting to the server...</p>
               <p v-else-if="games.length === 0">No public games! Try making a new game or find players in our <a target="_blank" href="https://discord.gg/Sp88DPedwh">discord server!</a></p>
               <p v-else-if="filterName.length > 0 && filteredGames.length === 0">No rooms with name "{{filterName}}"</p>
               <div class="gamelisting" v-else v-for="(game) in filteredGames" :key="game.roomId">
@@ -72,6 +73,7 @@ export default Vue.extend({
         },
         data() {
             return {
+                error:undefined as string| undefined,
                 create:false,
                 loading: true,
                 games: [] as RoomAvailable <any>[],
@@ -85,8 +87,13 @@ export default Vue.extend({
         methods: {
             async refreshGames() {
                 this.loading = true;
+                this.error = undefined;
+                try{
                 const gameListing = await connection.client.getAvailableRooms("standard")
                 this.games = gameListing
+                }catch(e){
+                    this.error = e.message;
+                }
                 this.loading = false;
             },
             async handleSubmit(){
