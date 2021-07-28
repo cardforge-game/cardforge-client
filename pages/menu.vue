@@ -114,14 +114,23 @@ export default Vue.extend({
                 this.loading = false;
             },
             async handleSubmit(){
+                let res = {success:false,error:undefined} as any
                 if(this.create){
-                    await connection.createRoom(this.name, this.roomName, this.privateRoom)
+                    res = await connection.createRoom(this.name, this.roomName, this.privateRoom)
                 }else if(!this.hasCode){
-                    this.quickJoin()
+                    res = await this.quickJoin()
                 }else{
-                    await connection.joinRoom(this.name,this.roomCode)
+                    res = await connection.joinRoom(this.name,this.roomCode)
                 }
-                this.$router.push(`/${connection.room?.id}`)
+
+                if(res.success){
+                    this.$router.push(`/${connection.room?.id}`)
+                }else{
+                    Swal.fire({
+                        title:"Failed to join room",
+                        text:res.error
+                    })
+                }
             },
             async joinRoom(id:string){
                 this.$router.push(`/${id}`)
@@ -140,8 +149,8 @@ export default Vue.extend({
                     this.name = res.value.trim()
                 }
 
-                await connection.quickJoin(this.name)
-                this.$router.push(`/${connection.room?.id}`)
+                return await connection.quickJoin(this.name)
+                
             }
             },
         async mounted() {
