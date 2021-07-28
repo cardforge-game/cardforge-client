@@ -95,6 +95,7 @@
                                 No Name
                             </summary>
                             <div class="section">
+
                                 <div class="field">
                                     <label>Attack Name</label>
                                     <input v-model="a.name" placeholder="Slap" maxlength="20" required :class="{
@@ -112,6 +113,16 @@
                                         } slaps the enemy dealing 10 damage!`" required />
                                     </div>
 
+                                <div class="field tags">
+                                     <p v-if="tags.length === 0">Your attack's tags will show up here!</p>
+                                     <p v-else>Attack Tags</p>
+                                     <br>
+                                     <br v-if="tags.length === 0">
+                                     <transition-group name="fade" tag="p">
+                                     <span @click="showLibrary(t)" v-for="(t,attackI) in tags(a)" :key="`tag-${attackI}-${i}`" class="selectable" :style="`background-color:${t.color};`">{{t.name}} {{t.emoji}}</span>
+                                     </transition-group>
+                                </div>
+                                <br><br>
                                 <div class="field">
                                     <button
                                         style="--type: var(--danger)"
@@ -141,6 +152,35 @@ import Swal from "sweetalert2";
 import connection from "~/services/connection";
 import getExampleAttack from "~/services/exampleAttacks";
 
+interface ITag{
+    name: string;
+    emoji: string;
+    type: string;
+    color: string;
+}
+
+const emojiBindings = {
+    damage: "⚔️",
+    heal:"🩹",
+    deaths:"💀",
+    kills:"🏆",
+    damage_in:"⬇️",
+    damage_out:"⬆️",
+    hand:"🎴",
+    multiply:"✖️",
+    add:"➕",
+    subtract:"➖",
+    divide:"➗"
+}
+
+const colorBindings = {
+    attribute:"#34495e",
+    operation:"#16a085",
+    variable:"#d35400",
+
+}
+
+
 export default Vue.extend({
     middleware: "validateGamePhase",
 
@@ -151,7 +191,6 @@ export default Vue.extend({
                 health: 10,
                 imgURL: "",
                 attacks: [],
-                modifiers:[]
             } as IPreviewCard,
             acceptedCards: 0,
             currentCache: JSON.parse(
@@ -182,6 +221,7 @@ export default Vue.extend({
                     icon: "success",
                     toast: true,
                     position: "top-end",
+                    timer:1500
                 });
 
                 this.acceptedCards++;
@@ -207,13 +247,51 @@ export default Vue.extend({
                     name: "",
                     health: (connection.state.resultsShown || 1) * 10,
                     imgURL: "",
-                    attacks: [],
-                    modifiers:[]
+                    attacks: []
                 };
             });
         }
     },
     methods: {
+        tags(a:IAttack){
+            let tags = [] as ITag[];
+            const relevantAttributes = ["heal", "damage"]
+
+            //Filter keys of attacks that are relevant
+            const keys = (Object.entries(a).filter(([k, v]) => {
+                return relevantAttributes.includes(k) && v > 0
+            })).map(([k, v]) => {
+                return {
+                    name: k,
+                    emoji: (emojiBindings as any)[k],
+                    color: colorBindings.attribute,
+                    type:"attribute"
+                }
+            })
+            tags = tags.concat(keys)
+
+            if (a.modifiers) {
+                a.modifiers.forEach(m => {
+                    tags.push({
+                        name: m.action,
+                        color: colorBindings.operation,
+                        emoji: (emojiBindings as any)[m.action],
+                        type:"operation"
+                    })
+                    tags.push({
+                        name: `based on ${(m.subject === "you") ? "your" : "enemy's"} ${m.item}`,
+                        color: colorBindings.variable,
+                        emoji: (emojiBindings as any)[m.item],
+                        type:"variable"
+                    })
+                })
+            }
+
+
+
+            tags = [...new Set(tags)]
+            return tags
+        },
         publishCard() {
             connection.room?.send("submitCard", this.cardData);
         },
@@ -241,7 +319,10 @@ export default Vue.extend({
             );
             this.previewCard();
         },
-    },
+        showLibrary(type:ITag){
+            connection.$emit("showLibrary",type.type,type.emoji)
+        }
+    }
 });
 </script>
 
@@ -372,4 +453,16 @@ details.attack-form:last-of-type {
     color: gray;
     font-style: italic;
 }
+
+.tags span{
+    color:white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background-color:var(--secondary);
+    white-space: nowrap;
+    display: inline-block;
+}
+
+
+
 </style>

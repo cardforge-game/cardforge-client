@@ -12,6 +12,7 @@
             <img
                 src="~/assets/images/logo-header.png"
                 class="selectable"
+                alt="CardForge"
             />
        </nuxt-link>
         <nuxt-link to="/menu" v-else>

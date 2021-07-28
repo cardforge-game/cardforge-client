@@ -10,6 +10,7 @@ declare interface IAttack {
     damage?: number;
     heal?: number;
     desc: string;
+    modifiers?: Modifier[];
 }
 
 declare interface Modifier{
@@ -25,7 +26,6 @@ declare interface IPreviewCard {
     health: number;
     imgURL: string;
     attacks: IAttack[];
-    modifiers: Modifier[];
 }
 
 declare interface ICard extends IPreviewCard {

@@ -2,6 +2,7 @@
     <div id="root">
         <AppHeader />
         <ClockBar />
+        <AttackLibrary />
         <CardOverlay />
         <Nuxt />
     </div>
