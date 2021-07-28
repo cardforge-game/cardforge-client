@@ -122,6 +122,7 @@ const connection = new Vue({
                     text: `You made $${profit} from players who bought your card!`,
                     toast: true,
                     position: "top-end",
+                    timer:3000
                 });
             });
 
