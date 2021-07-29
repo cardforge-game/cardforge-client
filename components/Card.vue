@@ -57,8 +57,8 @@
                             </small>
                         </div>
                         <div class="outline attack-stats">
-                            <p v-if="a.damage">{{ a.damage }}⚔️</p>
-                            <p v-if="a.heal" class="attackStat">{{ a.heal }}🩹</p>
+                            <p v-if="a.damage">{{ a.damage }}⚔️<span v-if="a.modifiers">{{(a.modifiers.find(atk=>atk.modifyingAttribute === "damage")) ? "+" : ""}}</span></p>
+                            <p v-if="a.heal" class="attackStat">{{ a.heal }}🩹<span v-if="a.modifiers">{{(a.modifiers.find(atk=>atk.modifyingAttribute === "heal")) ? "+" : ""}}</span></p>
                         </div>
 
                         <hr />
