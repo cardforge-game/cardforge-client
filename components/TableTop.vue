@@ -110,7 +110,10 @@ export default Vue.extend({
 
             if (selfTurn && !clickedSelf) {
                 this.attackTarget = player.id || null;
-                this.showCardDialog = true;
+                if(!this.showCardDialog){
+                    audio.cardSwipe.play();
+                    this.showCardDialog = true;
+                }
             }
         },
         doAttack(_attack: IAttack, attackIndex: number) {
@@ -148,6 +151,7 @@ export default Vue.extend({
 .card-dialog-perspective {
     position: fixed;
     right: 100px;
+    top: 100px;
 }
 
 .row {

@@ -3,12 +3,12 @@
         <div class="library">
             <div class="library-header">
                 <span class="bold h1">Attack Library 📚</span>
-                <span class="close" @click="show=false">X</span>
+                <span class="close selectable" @click="show=false">X</span>
             </div>
             <br>
             <div class="library-content">
                 <section class="sidebar">
-                    <a v-for="(e,i) in entries" :key="`entry-${i}`" @click="setPage(e.name)">{{e.name}}</a>
+                    <a v-for="(e,i) in entries" :key="`entry-${i}`" @click="setPage(e.name)" class="selectable">{{e.name}}</a>
                 </section>
                 <article class="entry" v-if="page">
                     <h3 class="bold h3">{{page.name}}</h3>
@@ -17,7 +17,7 @@
                     </pre>
                     <br><br>
                     <h5 class="h5">Examples of {{page.name.split(" ")[0]}}</h5>
-                    <span @click="copy(ex)" class="example" v-for="(ex,i) in page.examples" :key="`example-${i}`">
+                    <span @click="copy(ex)" class="example selectable" v-for="(ex,i) in page.examples" :key="`example-${i}`">
                         {{ex}}
                     </span>
                 </article>
@@ -39,7 +39,7 @@ const attributeEntries = JSON.parse(`[
     {
         "name":"Damage ⚔️",
         "description":"Damage removes health from the enemy card.\\nIf you make their health 0, you earn 2 points.",
-        "examples":["Deal 20 damage","Remove 10 health","Strike the enemy to inflict 50 damage"]
+        "examples":["Deal 20 damage","Remove 10 health","Strike the enemy to dish out 50 damage"]
     },
     {
         "name":"Heal 🩹",
@@ -168,7 +168,6 @@ export default Vue.extend({
     },
     mounted() {
             connection.$on('showLibrary',(type:string,emojiPage:string)=>{
-                console.log(emojiPage)
                 this.mode = type;
                 this.page = (this as any).entries.find((e:IEntry)=>e.name.includes(emojiPage));
                 this.show = true;
@@ -190,7 +189,7 @@ export default Vue.extend({
     animation: fadeInLib 0.1s ease-in-out;
     width:100vw;
     height:100vh;
-    position:absolute;
+    position:fixed;
     z-index: 3;
     display:flex;
     justify-content: center;
@@ -241,20 +240,12 @@ export default Vue.extend({
     transition: box-shadow 0.2s ease-in-out;
     color:white;
     background-color: var(--secondary);
-    cursor:copy;
     border: 2px solid transparent;
     transition: border 0.2s ease-in-out;
 }
 
 .example:hover{
     border: 2px solid var(--theme);
-}
-
-.close{
-    color: rgb(187, 171, 171);
-    cursor: pointer;
-    font-size: 2rem;
-    font-weight: 100;
 }
 
 .library-header{

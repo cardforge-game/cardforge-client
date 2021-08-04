@@ -1,7 +1,7 @@
 <template>
     <main>
         <MoneyIndicator />
-
+        <AttackLibrary />
         <section class="card-preview section">
             <h1>
                 You've made <b class="h1">{{ acceptedCards }}</b> cards.
@@ -39,7 +39,56 @@
                 </div>
             </details>
         </section>
-        <section class="section">
+        <section class="section" v-if="isEditingAttack">
+             <div class="subsection">
+                    <h3 class="bold">
+                        Editing {{(cardData.attacks[editAttackIndex].name && cardData.attacks[editAttackIndex].name.length > 0) ? cardData.attacks[editAttackIndex].name : "New Attack"}}
+                        <button style="--type: var(--primary)" type="button"
+                            @click="isEditingAttack=false;editAttackIndex=-1;">
+                            Back
+                        </button>
+                    </h3>
+                     <div class="section attack-editor" v-if="isEditingAttack">
+
+                            <div class="field">
+                                <label>Attack Name</label>
+                                <input v-model="cardData.attacks[editAttackIndex].name" placeholder="Slap" maxlength="20" required :class="{
+                                            attention: cardData.attacks[editAttackIndex].name.length <= 0,
+                                        }" />
+                                <button type="button" class="inline-block" @click="setExampleAttack(editAttackIndex)">
+                                    🎲
+                                </button>
+                            </div>
+
+                            <div class="field">
+                                <label>Attack Description</label>
+                                <textarea @blur="previewCard" v-model.lazy="cardData.attacks[editAttackIndex].desc" maxlength="100" :placeholder="`${
+                                            cardData.name || 'someone'
+                                        } slaps the enemy dealing 10 damage!`" required />
+                                </div>
+
+                                <div class="field tags">
+                                     <p v-if="tags.length === 0">Your attack's tags will show up here!</p>
+                                     <p v-else>Attack Tags</p>
+                                     <br>
+                                     <br v-if="tags.length === 0">
+                                     <transition-group name="fade" tag="p">
+                                     <span @click="showLibrary(t)" v-for="(t,attackI) in tags(cardData.attacks[editAttackIndex])" :key="`tag-${attackI}`" class="selectable" :style="`background-color:${t.color};`">{{t.name}} {{t.emoji}}</span>
+                                     </transition-group>
+                                </div>
+                                <br><br>
+                                <div class="field">
+                                    <button
+                                        style="--type: var(--danger)"
+                                        @click="isEditingAttack=false;cardData.attacks.splice(editAttackIndex, 1);editAttackIndex=-1;"
+                                    >
+                                        Remove Attack
+                                    </button>
+                                </div>
+                        </div>
+                </div>
+        </section>
+        <section class="section" v-else>
             <form @submit.prevent="publishCard">
                 <div class="subsection">
                     <h3 class="bold">Card Stats</h3>
@@ -64,16 +113,17 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="subsection">
-                    <h3 class="bold">
+                           <h3 class="bold">
                         Card Attacks
-                        <button v-if="cardData.attacks.length < 3 && cardData.name" style="--type: var(--success)"
+                        <button v-if="cardData.attacks.length < 2 && cardData.name" style="--type: var(--success)"
                             @click="
                                 cardData.attacks.push({
                                     name: '',
                                     desc: '',
-                                })
+                                });
+                                editAttackIndex = cardData.attacks.length -1;
+                                isEditingAttack = true;
                             ">
                             Add Attack ⚔️
                         </button>
@@ -86,58 +136,16 @@
                         Start creating a card by typing a name!
                     </p>
                     <div v-if="cardData.name">
-                        <details v-for="(a, i) in cardData.attacks" :key="`attackCardCreation-${i}`" open
-                            class="attack-form">
-                            <summary v-if="a.name.length > 0" class="h4 section">
-                                {{ a.name }}
-                            </summary>
-                            <summary v-else class="h4 placeholder section">
-                                No Name
-                            </summary>
-                            <div class="section">
+                        <div class="attack-listing selectable" v-for="(a, i) in cardData.attacks" :key="`attackCardCreation-${i}`" @click="editAttack(i)" customsound>
+                            <h4 class="h4" v-if="a.name.length > 0" >{{ a.name }}</h4>
+                            <h4 class="h4 placeholder" v-else>No Name</h4>
+                        </div>
 
-                                <div class="field">
-                                    <label>Attack Name</label>
-                                    <input v-model="a.name" placeholder="Slap" maxlength="20" required :class="{
-                                            attention: a.name.length <= 0,
-                                        }" />
-                                    <button type="button" class="inline-block" @click="setExampleAttack(i)">
-                                        🎲
-                                    </button>
-                                </div>
-
-                                <div class="field">
-                                    <label>Attack Description</label>
-                                    <textarea @blur="previewCard" v-model.lazy="a.desc" maxlength="100" :placeholder="`${
-                                            cardData.name || 'someone'
-                                        } slaps the enemy dealing 10 damage!`" required />
-                                    </div>
-
-                                <div class="field tags">
-                                     <p v-if="tags.length === 0">Your attack's tags will show up here!</p>
-                                     <p v-else>Attack Tags</p>
-                                     <br>
-                                     <br v-if="tags.length === 0">
-                                     <transition-group name="fade" tag="p">
-                                     <span @click="showLibrary(t)" v-for="(t,attackI) in tags(a)" :key="`tag-${attackI}-${i}`" class="selectable" :style="`background-color:${t.color};`">{{t.name}} {{t.emoji}}</span>
-                                     </transition-group>
-                                </div>
-                                <br><br>
-                                <div class="field">
-                                    <button
-                                        style="--type: var(--danger)"
-                                        @click="cardData.attacks.splice(i, 1)"
-                                    >
-                                        Remove Attack
-                                    </button>
-                                </div>
-                            </div>
-                        </details>
                     </div>
-                </div>
+                    </div>
 
                 <div v-if="cardData.name" class="subsection">
-                    <button type="submit" style="--type: var(--success)">
+                    <button type="submit" :style="`--type: var(--success);display: ${(isEditingAttack) ? 'none' : 'inline-block'}`">
                             Publish Card
                     </button>
                 </div>
@@ -151,6 +159,7 @@ import Vue from "vue";
 import Swal from "sweetalert2";
 import connection from "~/services/connection";
 import getExampleAttack from "~/services/exampleAttacks";
+import audio from "~/services/audio";
 
 interface ITag{
     name: string;
@@ -186,6 +195,8 @@ export default Vue.extend({
 
     data() {
         return {
+            editAttackIndex:-1,
+            isEditingAttack:false,
             cardData: {
                 name: "",
                 health: 10,
@@ -309,6 +320,7 @@ export default Vue.extend({
             );
         },
         setExampleAttack(i: number) {
+            audio.random.play()
             Vue.set(
                 this.cardData.attacks,
                 i,
@@ -321,6 +333,14 @@ export default Vue.extend({
         },
         showLibrary(type:ITag){
             connection.$emit("showLibrary",type.type,type.emoji)
+        },
+        attackPanelSfx(){
+            audio.expand.play()
+        },
+        editAttack(i:number){
+            this.attackPanelSfx()
+            this.editAttackIndex = i
+            this.isEditingAttack = true;
         }
     }
 });
@@ -396,7 +416,7 @@ details .section {
 }
 
 .subsection {
-    margin: 0 0.5rem;
+    margin: 2rem 0.5rem;
 }
 
 h3 {
@@ -408,25 +428,22 @@ h3 * {
     margin: 0 1rem;
 }
 
-.attack-form:not(details) {
-    padding: 1rem 0rem;
+.attack-listing{
+    background-color: var(--theme-dark);
+    padding: 1rem 2rem;
     margin: 1rem 0;
     border-radius: 10px;
+    transition: border 0.15s ease-in-out;
+    border: 2px transparent solid;
 }
-
-.attack-form summary {
-    margin-top: 1rem;
+.attack-listing:hover{
+    border-color: var(--light);
 }
-
-details.attack-form summary {
-    position: relative;
-}
-
-details.attack-form:first-of-type {
+.attack-listing:first-of-type {
     margin-top: 2rem;
 }
 
-details.attack-form:last-of-type {
+.attack-listing:last-of-type {
     margin-bottom: 2rem;
 }
 
