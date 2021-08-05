@@ -14,6 +14,8 @@
         :healed="isHealed"
         :indicator-text="indicatorText"
         @click="onClick"
+        @mouseenter="showOverlay(activeCard)"
+        @mouseleave="hideOverlay"
     />
     <p v-else-if="player" class="no-active-username">
         {{ player.name }}
@@ -92,7 +94,14 @@ export default Vue.extend({
     methods: {
         onClick() {
             this.$emit("click");
+            this.hideOverlay();
         },
+        showOverlay(card:ICard){
+             connection.$emit("showOverlay",card)
+        },
+        hideOverlay(){
+             connection.$emit("hideOverlay")
+        }
     },
 });
 </script>

@@ -2,6 +2,7 @@
     <div id="root">
         <AppHeader />
         <ClockBar />
+        <CardOverlay />
         <Nuxt />
     </div>
 </template>
@@ -29,3 +30,21 @@ main {
     opacity: 0;
 }
 </style>
+
+<script>
+import audio from "~/services/audio"
+
+export default {
+    mounted() {
+        //UI interactions SFX
+        document.addEventListener("mouseover",(e) => {
+            if(e.target.tagName === "BUTTON" || ( e.target.classList && e.target.classList.contains("selectable"))) audio.uiHover.play()
+        });
+
+        document.addEventListener("click",(e) => {
+            if((e.target.tagName === "BUTTON" ||( e.target.classList && e.target.classList.contains("selectable"))) && !e.target.getAttribute("customsound")) audio.click.play()
+        })
+
+    }
+}
+</script>

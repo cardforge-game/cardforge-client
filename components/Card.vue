@@ -36,45 +36,35 @@
                 </span>
             </span>
         </header>
-
-        <div v-if="!graphicOnly" class="card-content">
-            <div class="attack-container">
-                <div
-                    v-for="(a, i) in card.attacks"
-                    :key="`attk-${i}`"
-                    class="attack"
-                    :style="isInteractive ? `width: ${1.2 * size}rem` : ''"
-                    @click="isInteractive && onAttackTrigger(a, i)"
-                >
-                    <div>
-                        <p
-                            class="outline"
-                            :style="`font-size: max(${size}px, 1rem);`"
-                        >
-                            {{ a.name }}
-                        </p>
-                        <small
-                            v-if="showDetails"
-                            :style="`font-size: max(${
+        <div class="card-content-container">
+            <section v-if="!graphicOnly" class="card-content">
+                <div class="attack-container">
+                    <div v-for="(a, i) in card.attacks" :key="`attk-${i}`" class="attack"
+                        :style="isInteractive ? `width: ${1.2 * size}rem` : ''"
+                        @click="isInteractive && onAttackTrigger(a, i)">
+                        <div>
+                            <p class="outline" :style="`font-size: max(${size}px, 1rem);`">
+                                {{ a.name }}
+                            </p>
+                            <small v-if="showDetails" :style="`font-size: max(${
                                 0.6 * size
-                            }px,  0.75rem);`"
-                            class="attack-desc"
-                        >
-                            {{
+                            }px,  0.75rem);`" class="attack-desc">
+                                {{
                                 a.desc.length > 100
                                     ? `${a.desc.substring(0, 100)}...`
                                     : a.desc
                             }}
-                        </small>
-                    </div>
-                    <div class="outline attack-stats">
-                        <p v-if="a.damage">{{ a.damage }}⚔️</p>
-                        <p v-if="a.heal" class="attackStat">{{ a.heal }}🩹</p>
-                    </div>
+                            </small>
+                        </div>
+                        <div class="outline attack-stats">
+                            <p v-if="a.damage">{{ a.damage }}⚔️<span v-if="a.modifiers">{{(a.modifiers.find(atk=>atk.modifyingAttribute === "damage")) ? "+" : ""}}</span></p>
+                            <p v-if="a.heal" class="attackStat">{{ a.heal }}🩹<span v-if="a.modifiers">{{(a.modifiers.find(atk=>atk.modifyingAttribute === "heal")) ? "+" : ""}}</span></p>
+                        </div>
 
-                    <hr />
+                        <hr />
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 </template>
@@ -174,6 +164,12 @@ export default Vue.extend({
 </script>
 <!-- Card Formating/Positions -->
 <style>
+.card-sidebar{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height:100%;
+}
 .attack-stats {
     display: flex;
     flex-direction: column;
@@ -194,6 +190,7 @@ export default Vue.extend({
 
 .attack {
     display: grid;
+    gap: 1em;
     grid-template-columns: 4fr 1fr;
 }
 
@@ -248,6 +245,8 @@ export default Vue.extend({
 
 header {
     display: flex;
+    min-width: 100%;
+    height:10%;
     align-items: flex-start;
 }
 
@@ -260,8 +259,7 @@ header {
     border-radius: 0 10px 0 10px;
 
     position: relative;
-    bottom: 2px;
-    left: 2px;
+    float:right;
 
     background: var(--success);
 }
@@ -271,7 +269,6 @@ header {
 }
 
 .card-content {
-    margin-top: 4rem;
     margin-bottom: 1rem;
     margin-left: 1rem;
     margin-right: 1rem;
@@ -300,9 +297,6 @@ header {
 }
 
 .card {
-    display: flex;
-    flex-direction: column;
-
     min-width: 100px;
     min-height: 140px;
 
@@ -315,6 +309,14 @@ header {
     --rotate: 0deg;
     transform: rotate(var(--rotate));
     transition: border 0.5s ease-in-out, transform 0.25s ease-in-out;
+}
+
+.card-content-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80%;
 }
 
 hr {

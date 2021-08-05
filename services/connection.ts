@@ -123,6 +123,7 @@ const connection = new Vue({
                     text: `You made $${profit} from players who bought your card!`,
                     toast: true,
                     position: "top-end",
+                    timer:3000
                 });
             });
 
@@ -182,7 +183,9 @@ const connection = new Vue({
                 this.room = undefined;
                 this.time = -1;
                 this.unsynced.disconnnected = undefined;
-            } catch (error) {}
+            } catch (error) {
+                
+            }
         },
     },
 });

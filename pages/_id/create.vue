@@ -1,15 +1,18 @@
 <template>
     <main>
         <MoneyIndicator />
-
+        <AttackLibrary />
         <section class="card-preview section">
             <h1>
                 You've made <b class="h1">{{ acceptedCards }}</b> cards.
             </h1>
             <br />
             <p v-if="cardData.cardCost" class="h6 cost">
-                Other players can by this card at:
+                Other players can buy this card at:
                 <b>${{ cardData.cardCost }}</b>
+                <br>
+                When a player purchases a card you designed, you earn <span class="bold">1</span> point
+            
             </p>
             <Card :size="30" :card="cardData" :show-details="true" />
 
@@ -36,34 +39,72 @@
                 </div>
             </details>
         </section>
-        <section class="section">
-            <form @submit.prevent="uploadCard">
+        <section class="section" v-if="isEditingAttack">
+             <div class="subsection">
+                    <h3 class="bold">
+                        Editing {{(cardData.attacks[editAttackIndex].name && cardData.attacks[editAttackIndex].name.length > 0) ? cardData.attacks[editAttackIndex].name : "New Attack"}}
+                        <button style="--type: var(--primary)" type="button"
+                            @click="isEditingAttack=false;editAttackIndex=-1;">
+                            Back
+                        </button>
+                    </h3>
+                     <div class="section attack-editor" v-if="isEditingAttack">
+
+                            <div class="field">
+                                <label>Attack Name</label>
+                                <input v-model="cardData.attacks[editAttackIndex].name" placeholder="Slap" maxlength="20" required :class="{
+                                            attention: cardData.attacks[editAttackIndex].name.length <= 0,
+                                        }" />
+                                <button type="button" class="inline-block" @click="setExampleAttack(editAttackIndex)">
+                                    🎲
+                                </button>
+                            </div>
+
+                            <div class="field">
+                                <label>Attack Description</label>
+                                <textarea @blur="previewCard" v-model.lazy="cardData.attacks[editAttackIndex].desc" maxlength="100" :placeholder="`${
+                                            cardData.name || 'someone'
+                                        } slaps the enemy dealing 10 damage!`" required />
+                                </div>
+
+                                <div class="field tags">
+                                     <p v-if="tags.length === 0">Your attack's tags will show up here!</p>
+                                     <p v-else>Attack Tags</p>
+                                     <br>
+                                     <br v-if="tags.length === 0">
+                                     <transition-group name="fade" tag="p">
+                                     <span @click="showLibrary(t)" v-for="(t,attackI) in tags(cardData.attacks[editAttackIndex])" :key="`tag-${attackI}`" class="selectable" :style="`background-color:${t.color};`">{{t.name}} {{t.emoji}}</span>
+                                     </transition-group>
+                                </div>
+                                <br><br>
+                                <div class="field">
+                                    <button
+                                        style="--type: var(--danger)"
+                                        @click="isEditingAttack=false;cardData.attacks.splice(editAttackIndex, 1);editAttackIndex=-1;"
+                                    >
+                                        Remove Attack
+                                    </button>
+                                </div>
+                        </div>
+                </div>
+        </section>
+        <section class="section" v-else>
+            <form @submit.prevent="publishCard">
                 <div class="subsection">
                     <h3 class="bold">Card Stats</h3>
 
                     <div class="attack-form inline-fields">
                         <div class="field">
                             <label>Card Name</label>
-                            <input
-                                v-model="cardData.name"
-                                :class="{
+                            <input v-model="cardData.name" :class="{
                                     attention: cardData.name.length <= 0,
-                                }"
-                                placeholder="Lord of Darkness"
-                                maxlength="24"
-                                required
-                            />
+                                }" placeholder="Lord of Darkness" maxlength="24" required />
                         </div>
 
                         <div class="field">
                             <label>Card Health</label>
-                            <input
-                                v-model.number="cardData.health"
-                                type="number"
-                                placeholder="10"
-                                min="1"
-                                required
-                            />
+                            <input v-model.number="cardData.health" type="number" placeholder="10" min="1"
+                                @blur="previewCard" required />
                         </div>
 
                         <div class="field">
@@ -72,98 +113,39 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="subsection">
-                    <h3 class="bold">
+                           <h3 class="bold">
                         Card Attacks
-                        <button
-                            v-if="cardData.attacks.length < 3 && cardData.name"
-                            style="--type: var(--success)"
+                        <button v-if="cardData.attacks.length < 2 && cardData.name" style="--type: var(--success)"
                             @click="
                                 cardData.attacks.push({
                                     name: '',
                                     desc: '',
-                                })
-                            "
-                        >
+                                });
+                                editAttackIndex = cardData.attacks.length -1;
+                                isEditingAttack = true;
+                            ">
                             Add Attack ⚔️
                         </button>
                     </h3>
 
-                    <p
-                        v-if="cardData.attacks.length === 0 && cardData.name"
-                        class="field"
-                    >
+                    <p v-if="cardData.attacks.length === 0 && cardData.name" class="field">
                         You have no attacks setup! Click "Add Attack"
                     </p>
                     <p v-else-if="!cardData.name" class="field">
                         Start creating a card by typing a name!
                     </p>
                     <div v-if="cardData.name">
-                        <details
-                            v-for="(a, i) in cardData.attacks"
-                            :key="`attackCardCreation-${i}`"
-                            open
-                            class="attack-form"
-                        >
-                            <summary
-                                v-if="a.name.length > 0"
-                                class="h4 section"
-                            >
-                                {{ a.name }}
-                            </summary>
-                            <summary v-else class="h4 placeholder section">
-                                No Name
-                            </summary>
-                            <div class="section">
-                                <div class="field">
-                                    <label>Attack Name</label>
-                                    <input
-                                        v-model="a.name"
-                                        placeholder="Slap"
-                                        maxlength="20"
-                                        required
-                                        :class="{
-                                            attention: a.name.length <= 0,
-                                        }"
-                                    />
-                                    <button
-                                        type="button"
-                                        class="inline-block"
-                                        @click="setExampleAttack(i)"
-                                    >
-                                        🎲
-                                    </button>
-                                </div>
+                        <div class="attack-listing selectable" v-for="(a, i) in cardData.attacks" :key="`attackCardCreation-${i}`" @click="editAttack(i)" customsound>
+                            <h4 class="h4" v-if="a.name.length > 0" >{{ a.name }}</h4>
+                            <h4 class="h4 placeholder" v-else>No Name</h4>
+                        </div>
 
-                                <div class="field">
-                                    <label>Attack Description</label>
-                                    <textarea
-                                        @blur="previewCard"
-                                        v-model.lazy="a.desc"
-                                        maxlength="100"
-                                        :placeholder="`${
-                                            cardData.name || 'someone'
-                                        } slaps the enemy dealing 10 damage!`"
-                                        required
-                                    />
-                                </div>
-
-                                <div class="field">
-                                    <button
-                                        style="--type: var(--danger)"
-                                        @click="cardData.attacks.splice(i, 1)"
-                                    >
-                                        Remove Attack
-                                    </button>
-                                </div>
-                            </div>
-                        </details>
                     </div>
-                </div>
+                    </div>
 
                 <div v-if="cardData.name" class="subsection">
-                    <button type="submit" style="--type: var(--success)" :disabled="isUploading">
+                    <button type="submit" :style="`--type: var(--success);display: ${(isEditingAttack) ? 'none' : 'inline-block'}`" :disabled="isUploading">
                             Publish Card
                     </button>
                 </div>
@@ -177,6 +159,36 @@ import Vue from "vue";
 import Swal from "sweetalert2";
 import connection from "~/services/connection";
 import getExampleAttack from "~/services/exampleAttacks";
+import audio from "~/services/audio";
+
+interface ITag{
+    name: string;
+    emoji: string;
+    type: string;
+    color: string;
+}
+
+const emojiBindings = {
+    damage: "⚔️",
+    heal:"🩹",
+    deaths:"💀",
+    kills:"🏆",
+    damage_in:"⬇️",
+    damage_out:"⬆️",
+    hand:"🎴",
+    multiply:"✖️",
+    add:"➕",
+    subtract:"➖",
+    divide:"➗"
+}
+
+const colorBindings = {
+    attribute:"#34495e",
+    operation:"#16a085",
+    variable:"#d35400",
+
+}
+
 
 export default Vue.extend({
     middleware: "validateGamePhase",
@@ -186,6 +198,8 @@ export default Vue.extend({
     data() {
         return {
             isUploading:false,
+            editAttackIndex:-1,
+            isEditingAttack:false,
             cardData: {
                 fileId:"",
                 name: "",
@@ -227,6 +241,7 @@ export default Vue.extend({
                     icon: "success",
                     toast: true,
                     position: "top-end",
+                    timer:1500
                 });
 
                 this.acceptedCards++;
@@ -252,9 +267,9 @@ export default Vue.extend({
                 this.cardData = {
                     fileId:"",
                     name: "",
-                    health: 10,
+                    health: (connection.state.resultsShown || 1) * 10,
                     imgURL: "",
-                    attacks: [],
+                    attacks: []
                 };
                 connection.$emit("submit");
             });
@@ -278,6 +293,45 @@ export default Vue.extend({
             this.isUploading = true
             connection.$emit("upload")
         },
+        tags(a:IAttack){
+            let tags = [] as ITag[];
+            const relevantAttributes = ["heal", "damage"]
+
+            //Filter keys of attacks that are relevant
+            const keys = (Object.entries(a).filter(([k, v]) => {
+                return relevantAttributes.includes(k) && v > 0
+            })).map(([k, v]) => {
+                return {
+                    name: k,
+                    emoji: (emojiBindings as any)[k],
+                    color: colorBindings.attribute,
+                    type:"attribute"
+                }
+            })
+            tags = tags.concat(keys)
+
+            if (a.modifiers) {
+                a.modifiers.forEach(m => {
+                    tags.push({
+                        name: m.action,
+                        color: colorBindings.operation,
+                        emoji: (emojiBindings as any)[m.action],
+                        type:"operation"
+                    })
+                    tags.push({
+                        name: `based on ${(m.subject === "you") ? "your" : "enemy's"} ${m.item}`,
+                        color: colorBindings.variable,
+                        emoji: (emojiBindings as any)[m.item],
+                        type:"variable"
+                    })
+                })
+            }
+
+
+
+            tags = [...new Set(tags)]
+            return tags
+        },
         publishCard() {
             connection.room?.send("submitCard", {...this.cardData,imgURL:""});
         },
@@ -296,6 +350,7 @@ export default Vue.extend({
             );
         },
         setExampleAttack(i: number) {
+            audio.random.play()
             Vue.set(
                 this.cardData.attacks,
                 i,
@@ -306,7 +361,18 @@ export default Vue.extend({
             );
             this.previewCard();
         },
-    },
+        showLibrary(type:ITag){
+            connection.$emit("showLibrary",type.type,type.emoji)
+        },
+        attackPanelSfx(){
+            audio.expand.play()
+        },
+        editAttack(i:number){
+            this.attackPanelSfx()
+            this.editAttackIndex = i
+            this.isEditingAttack = true;
+        }
+    }
 });
 </script>
 
@@ -357,7 +423,7 @@ details .section {
 
 .card {
     text-align: left;
-    display: inline-flex;
+    display: inline-block;
 }
 
 .previous-card {
@@ -380,7 +446,7 @@ details .section {
 }
 
 .subsection {
-    margin: 0 0.5rem;
+    margin: 2rem 0.5rem;
 }
 
 h3 {
@@ -392,25 +458,22 @@ h3 * {
     margin: 0 1rem;
 }
 
-.attack-form:not(details) {
-    padding: 1rem 0rem;
+.attack-listing{
+    background-color: var(--theme-dark);
+    padding: 1rem 2rem;
     margin: 1rem 0;
     border-radius: 10px;
+    transition: border 0.15s ease-in-out;
+    border: 2px transparent solid;
 }
-
-.attack-form summary {
-    margin-top: 1rem;
+.attack-listing:hover{
+    border-color: var(--light);
 }
-
-details.attack-form summary {
-    position: relative;
-}
-
-details.attack-form:first-of-type {
+.attack-listing:first-of-type {
     margin-top: 2rem;
 }
 
-details.attack-form:last-of-type {
+.attack-listing:last-of-type {
     margin-bottom: 2rem;
 }
 
@@ -437,4 +500,16 @@ details.attack-form:last-of-type {
     color: gray;
     font-style: italic;
 }
+
+.tags span{
+    color:white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background-color:var(--secondary);
+    white-space: nowrap;
+    display: inline-block;
+}
+
+
+
 </style>

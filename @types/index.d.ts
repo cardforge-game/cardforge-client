@@ -10,6 +10,15 @@ declare interface IAttack {
     damage?: number;
     heal?: number;
     desc: string;
+    modifiers?: Modifier[];
+}
+
+declare interface Modifier{
+    modifyingAttribute: string
+    item: string;
+    subject: string;
+    action: string;
+    errors:string[];
 }
 
 declare interface IPreviewCard {
@@ -30,6 +39,7 @@ declare interface IPlayer {
     name: string;
     money: number;
     deck: ICard[];
+    combatHand: ICard[];
     activeCard: ICard; // index of Player.deck
     host: boolean;
 }

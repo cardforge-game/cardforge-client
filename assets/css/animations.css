@@ -11,3 +11,16 @@
         transform:translateY(0px)
     }
   }
+
+.fade-enter-active{
+  animation: fade .75s;
+}
+
+@keyframes fade{
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}

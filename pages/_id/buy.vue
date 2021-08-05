@@ -11,70 +11,55 @@
                         :key="`card-${i}`"
                         class="card-item"
                     >
-                        <div class="card-overhead">
-                            <span class="card-price-display">
-                                Cost: $ {{ c.cardCost }}
-                            </span>
-                        </div>
                         <Card
                             :key="`card-${i}`"
                             :card="c"
                             :size="15"
                             :shadow="false"
-                            @click="buyCard(c.id)"
+                            :style="`${(buyingCard && c.id === buyingCard.id) ? 'transition:none;border: 5px solid var(--primary)' : ''}`"
+                            @click="setBuying(c)"
                         />
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="deck">
-                <h1 class="section-header">Collection 🎒</h1>
-                <div class="card-container">
-                    <div
-                        v-for="(c, i) in connection.currentPlayer.inventory"
-                        :key="`card-inv-${i}`"
-                        class="card-item"
-                    >
-                        <Card
-                            :card="c"
-                            :size="15"
-                            :shadow="false"
-                            @click="addToDeck(i)"
-                        />
+
+            <div class="row card-purchase" v-if="isBuyingCard">
+                <span class="close selectable" @click=" isBuyingCard = false; buyingCard = undefined;">X</span>
+                <Card :size="30" :showDetails="true" :card="buyingCard"/>
+                <button @click="buyCard(buyingCard.id)" style="--type: var(--success)" :disabled="connection.currentPlayer.money < buyingCard.cardCost">Purchase (${{buyingCard.cardCost}})</button>
+            </div>
+
+
+            <div class="row" v-if="!isBuyingCard">
+                <div class="deck">
+                    <h1 class="section-header">Collection 🎒</h1>
+                    <div class="card-container">
+                        <div v-for="(c, i) in connection.currentPlayer.inventory" :key="`card-inv-${i}`"
+                            class="card-item">
+                            <Card :card="c" :size="15" :shadow="false" @click="addToDeck(i)" @mouseenter="showOverlay(c)" @mouseleave="hideOverlay" />
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="deck">
-                <h1 class="section-header">
-                    Active Deck ⚡ ({{
+                <div class="deck activedeck">
+                    <h1 class="section-header">
+                        Active Deck ⚡ ({{
                         connection.currentPlayer.deck.length
                     }}/7)
-                </h1>
-                <div class="card-container">
-                    <p
-                        v-if="connection.currentPlayer.deck.length === 0"
-                        class="hint"
-                    >
-                        Click on cards from your collection to use them in
-                        battle!
-                    </p>
-                    <div
-                        v-for="(c, i) in connection.currentPlayer.deck"
-                        :key="`card-deck-${i}`"
-                        class="card-item"
-                    >
-                        <Card
-                            :card="c"
-                            :size="15"
-                            :shadow="false"
-                            @click="addToInv(i)"
-                        />
+                    </h1>
+                    <div class="card-container">
+                        <p v-if="connection.currentPlayer.deck.length === 0" class="hint">
+                            Click on cards from your collection to use them in
+                            battle!
+                        </p>
+                        <div v-for="(c, i) in connection.currentPlayer.deck" :key="`card-deck-${i}`" class="card-item">
+                            <Card :card="c" :size="15" :shadow="false" @click="addToInv(i)" @mouseenter="showOverlay(c)" @mouseleave="hideOverlay" />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+    
     </main>
 </template>
 
@@ -91,6 +76,8 @@ export default Vue.extend({
         return {
             cards: [] as ICard[],
             inventory: [],
+            isBuyingCard: false,
+            buyingCard:undefined as ICard | undefined
         };
     },
     computed: {
@@ -112,17 +99,32 @@ export default Vue.extend({
     },
     methods: {
         buyCard(id: string) {
+            this.isBuyingCard = false;
+            this.buyingCard = undefined;
             connection.room?.send("buyCard", { id });
             audio.buy.play();
         },
         addToDeck(index: number) {
+            this.hideOverlay()
             connection.room?.send("addCardToDeck", { index });
             audio.changeCard.play();
         },
         addToInv(index: number) {
+            this.hideOverlay()
             connection.room?.send("addCardToInventory", { index });
             audio.changeCard.play();
         },
+        showOverlay(card:ICard){
+            connection.$emit("showOverlay",card)
+        },
+        hideOverlay(){
+            connection.$emit("hideOverlay")
+        },
+        setBuying(c: ICard){
+            this.buyingCard = c;
+            this.isBuyingCard = true;
+            audio.selectCard.play();
+        }
     },
 });
 </script>
@@ -147,8 +149,6 @@ main {
 
 .card-container {
     max-height: 78vh;
-    overflow-y: auto;
-    overflow-x: hidden;
 }
 
 .card-container .hint {
@@ -200,6 +200,8 @@ main {
     flex: 1;
     margin: 1rem;
     overflow: hidden;
+    overflow-y: scroll;
+    
 }
 
 .section-header {
@@ -232,5 +234,29 @@ main {
 
 .active-deck-info b {
     color: var(--light);
+}
+
+.row-slide-enter-active{
+    animation: rowSlide 0.5s ease-in-out;
+}
+
+.row-slide-leave-active{
+    animation: rowSlide 0.5s ease-in-out reverse;
+}
+
+.card-purchase{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+@keyframes rowSlide{
+    from{
+    transform:translateY(100vh);
+    }
+    to{
+        transform:translateY(0)
+    }
 }
 </style>
