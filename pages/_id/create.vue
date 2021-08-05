@@ -89,7 +89,7 @@
                 </div>
         </section>
         <section class="section" v-else>
-            <form @submit.prevent="publishCard">
+            <form @submit.prevent="uploadCard">
                 <div class="subsection">
                     <h3 class="bold">Card Stats</h3>
 
