@@ -9,11 +9,10 @@
     </div>
     <header v-else>
        <nuxt-link to="/" v-if="!connection.room">
-            <img
-                src="~/assets/images/logo-header.png"
-                class="selectable"
-                alt="CardForge"
-            />
+            <p
+                class="selectable logo"
+                alt="CardForge">
+            </p>
        </nuxt-link>
         <nuxt-link to="/menu" v-else>
             <button style="--type: var(--danger)" class="selectable">
@@ -60,6 +59,16 @@ img {
     height: 3.25rem;
 }
 
+.logo{
+    background-image: url('~assets/images/logo-header.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    padding: 0px;
+    margin: 0px;
+    width: 50vw;
+    height: 50px;
+}
+
 .disconnect-alert{
     width:100vw;
     color: var(--light);
@@ -74,4 +83,6 @@ img {
 .disconnect-alert p, .disconnect-alert b{
     color: var(--light);
 }
+
+
 </style>

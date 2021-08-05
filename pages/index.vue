@@ -29,7 +29,7 @@
         </div>
         <div class="content">
             <p class="h6">
-                CardForge is an online party game where the players face of to
+                CardForge is an online party game where the players face off to
                 <b class="h5">build</b>, <b class="h5">exchange</b>, and
                 <b class="h5">battle</b> their own custom cards!
             </p>
@@ -138,7 +138,7 @@
                         </p>
                     </span>
                     <span>
-                        <div class="deck">
+                        <div class="deck discord">
                             <iframe
                                 src="https://discord.com/widget?id=862843702497378345&theme=dark"
                                 width="350"
@@ -259,7 +259,7 @@ main {
 }
 @media only screen and (max-width: 768px) {
     .text-xl {
-        font-size: 4rem;
+        font-size: 2rem;
         font-weight: 800;
         text-transform: uppercase;
     }
@@ -274,6 +274,10 @@ main {
 
     .lg-card {
         display: none;
+    }
+
+    .flex-center{
+        flex-direction: column;
     }
 
     .banner {

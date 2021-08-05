@@ -54,8 +54,8 @@
                       <input type="checkbox" v-model="privateRoom" />
                   </div>
                   <br><br>
-                  <button v-if="hasCode || create" type="submit">{{(create) ? "Create" : "Join"}}</button>
-                  <button v-else type="submit">Quick Join</button>
+                  <button v-if="hasCode || create" type="submit" :class="{'disabled':isLoading}">{{(create) ? "Create" : "Join"}}</button>
+                  <button v-else type="submit"  :class="{'disabled':isLoading}" customsound>Quick Join</button>
                   <p v-if="!create" class="toggle" @click="hasCode = !hasCode">{{(hasCode) ? "Join without" : "I have"}} a code</p>
               </form>
           </div>
@@ -77,6 +77,7 @@ import Vue from 'vue'
 import connection from "~/services/connection";
 import { RoomAvailable } from "colyseus.js"
 import Swal from "sweetalert2";
+import audio from '~/services/audio';
 export default Vue.extend({
     computed: {
             connection() {
@@ -99,6 +100,7 @@ export default Vue.extend({
                 roomName:"",
                 privateRoom:false,
                 filterName:"",
+                isLoading:false,
             }
         },
         methods: {
@@ -114,6 +116,9 @@ export default Vue.extend({
                 this.loading = false;
             },
             async handleSubmit(){
+                connection.resetGameState()
+                audio.start.play()
+                this.isLoading = true
                 let res = {success:false,error:undefined} as any
                 if(this.create){
                     res = await connection.createRoom(this.name, this.roomName, this.privateRoom)
@@ -131,8 +136,10 @@ export default Vue.extend({
                         text:res.error
                     })
                 }
+                this.isLoading = false
             },
             async joinRoom(id:string){
+                audio.start.play()
                 this.$router.push(`/${id}`)
             },
             async quickJoin() {
@@ -202,6 +209,10 @@ form .field{
     height:80vh;
     background-color: #eae0d79f;
     padding: 2rem 1rem;
+    transition: background-color 0.2s ease-in-out;
+}
+.menu-panel:hover{
+    background-color: #eae0d7;
 }
 
 .dev-notice{
@@ -248,9 +259,6 @@ tr:nth-child(even) {
         text-align: center;
         overflow-y: scroll;
         max-height: 30vh;
-    }
-    .menu-panel {
-        height: 40vh;
     }
 }
 </style>

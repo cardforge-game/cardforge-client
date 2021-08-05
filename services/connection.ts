@@ -178,7 +178,9 @@ const connection = new Vue({
                 this.room = undefined;
                 this.time = -1;
                 this.unsynced.disconnnected = undefined;
-            } catch (error) {}
+            } catch (error) {
+                
+            }
         },
     },
 });

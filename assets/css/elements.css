@@ -26,6 +26,13 @@ button:focus {
     border-color: var(--light);
 }
 
+.button.disabled,button:disabled,
+.button.disabled,button:disabled {
+    background-color:#b2bec3;
+    border-color: transparent !important;
+    cursor: not-allowed !important;
+}
+
 /* Button Group */
 .button-group button {
     border-radius: 0;
@@ -43,4 +50,11 @@ button:focus {
 
 .button-group button:last-of-type {
     border-radius: 0 10px 10px 0;
+}
+
+.close{
+    color: rgb(187, 171, 171);
+    cursor: pointer;
+    font-size: 2rem;
+    font-weight: 100;
 }

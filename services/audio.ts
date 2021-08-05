@@ -32,6 +32,34 @@ const audio = {
         src: "/sounds/woosh.webm",
         rate:0.9,
     }),
+    uiHover: new Howl({
+        src: "/sounds/hover.webm",
+        volume:0.05
+    }),
+    random: new Howl({
+        src: "/sounds/random.webm",
+        volume:0.5
+    }),
+    click: new Howl({
+        src: "/sounds/click.webm",
+        volume:0.04
+    }),
+    selectCard: new Howl({
+        src: "/sounds/selectcard.webm",
+        volume:0.5
+    }),
+    start: new Howl({
+        src: "/sounds/start.webm",
+    }),
+    expand: new Howl({
+        src: "/sounds/expand.webm",
+        volume:0.5
+    }),
+    cardSwipe: new Howl({
+        src: "/sounds/cardSwipe.webm",
+        volume:0.5,
+        rate:1.5
+    }),
     hover: {
         0: new Howl({
             src: "/sounds/hover0.ogg",
