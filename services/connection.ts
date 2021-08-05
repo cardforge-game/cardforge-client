@@ -17,6 +17,7 @@ const connection = new Vue({
             eventRegistered: false,
             unsynced: {
                 library: [] as ICard[],
+                uploadCredentials: null as Record<string,string> | null,
                 leaderboard: {} as Record<string, number>,
                 pointMetrics: [],
                 lastAttack: undefined as IAttackBroadcast | undefined,
@@ -151,6 +152,10 @@ const connection = new Vue({
                 );
             });
 
+            // Update the uploadCredentials for card uploads when received: 
+            this.room?.onMessage("requestUploadCredentials", (creds: Record<string, string>) => {
+                this.unsynced.uploadCredentials = creds;
+            });
             // Game Over Alert:
             this.room?.onMessage("gameOver", (r) => {
                 const winnerName = Object.entries(r)

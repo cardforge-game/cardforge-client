@@ -89,7 +89,7 @@
                 </div>
         </section>
         <section class="section" v-else>
-            <form @submit.prevent="publishCard">
+            <form @submit.prevent="uploadCard">
                 <div class="subsection">
                     <h3 class="bold">Card Stats</h3>
 
@@ -108,8 +108,8 @@
                         </div>
 
                         <div class="field">
-                            <label>Card Image URL</label>
-                            <input v-model="cardData.imgURL" placeholder="link.jpg" required />
+                            <label>Card Image</label>
+                            <UploadInput :required="false" :onSuccess="uploadSuccess" :onError="uploadError"/>
                         </div>
                     </div>
                 </div>
@@ -145,7 +145,7 @@
                     </div>
 
                 <div v-if="cardData.name" class="subsection">
-                    <button type="submit" :style="`--type: var(--success);display: ${(isEditingAttack) ? 'none' : 'inline-block'}`">
+                    <button type="submit" :style="`--type: var(--success);display: ${(isEditingAttack) ? 'none' : 'inline-block'}`" :disabled="isUploading">
                             Publish Card
                     </button>
                 </div>
@@ -192,12 +192,16 @@ const colorBindings = {
 
 export default Vue.extend({
     middleware: "validateGamePhase",
-
+    computed: {
+        authURL() {return "http://" + (process.env.SERVER_ENDPOINT as string).split("://")[1] + '/upload'}
+    },
     data() {
         return {
+            isUploading:false,
             editAttackIndex:-1,
             isEditingAttack:false,
             cardData: {
+                fileId:"",
                 name: "",
                 health: 10,
                 imgURL: "",
@@ -210,6 +214,10 @@ export default Vue.extend({
         };
     },
     mounted() {
+        connection.$on("imageChanged",(url:string)=>{
+        this.cardData.imgURL = url
+        })
+
         if (!connection.eventRegistered && connection.room) {
             this.cardData.health = (connection.state.resultsShown || 1) * 10;
             Swal.fire(
@@ -223,10 +231,11 @@ export default Vue.extend({
             // connection.eventRegistered = true;
 
             connection.room.onMessage("previewCard", (card: IPreviewCard) => {
-                this.cardData = card;
+                this.cardData = {...this.cardData,...card,imgURL:this.cardData.imgURL};
             });
 
-            connection.room.onMessage("cardAccepted", () => {
+            connection.room.onMessage("cardAccepted", async () => {
+                this.isUploading = false
                 Swal.fire({
                     title: "Card Accepted!",
                     icon: "success",
@@ -244,7 +253,8 @@ export default Vue.extend({
                 const cache = JSON.parse(
                     (localStorage.getItem("cachedCards") as any) || "[]"
                 );
-
+                //Turn image into base64 for saving
+                this.cardData.fileId = ""
                 localStorage.setItem(
                     "cachedCards",
                     JSON.stringify([...cache, this.cardData])
@@ -255,15 +265,34 @@ export default Vue.extend({
                 );
 
                 this.cardData = {
+                    fileId:"",
                     name: "",
                     health: (connection.state.resultsShown || 1) * 10,
                     imgURL: "",
                     attacks: []
                 };
+                connection.$emit("submit");
             });
         }
     },
+    beforeDestroy(){
+        connection.$off("imageChanged")
+    },
     methods: {
+        uploadSuccess(res:UploadResponse){
+            this.cardData.fileId = res.fileId
+            this.publishCard()
+        },
+        uploadError(err:UploadResponseError){
+            this.isUploading = false
+            this.cardData.imgURL = ""
+            this.cardData.fileId = ""
+            Swal.fire({icon:"error",text:err.message})
+        },
+        uploadCard(){
+            this.isUploading = true
+            connection.$emit("upload")
+        },
         tags(a:IAttack){
             let tags = [] as ITag[];
             const relevantAttributes = ["heal", "damage"]
@@ -304,13 +333,14 @@ export default Vue.extend({
             return tags
         },
         publishCard() {
-            connection.room?.send("submitCard", this.cardData);
+            connection.room?.send("submitCard", {...this.cardData,imgURL:""});
         },
         previewCard() {
-            connection.room?.send("previewCard", this.cardData);
+            connection.room?.send("previewCard", {...this.cardData,imgURL:""});
         },
         loadCard(card: IPreviewCard) {
             this.cardData = JSON.parse(JSON.stringify(card));
+            connection.$emit("restore", this.cardData.imgURL)
         },
         deleteCard(i: number) {
             this.currentCache.splice(i, 1);
