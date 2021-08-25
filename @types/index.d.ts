@@ -22,6 +22,7 @@ declare interface Modifier{
 }
 
 declare interface IPreviewCard {
+    fileId:string;
     name: string;
     health: number;
     imgURL: string;
@@ -57,5 +58,27 @@ declare interface IAttackBroadcast {
     attack: IAttack;
 }
 
+declare module "imagekitio-vue";
+
+declare interface UploadResponse {
+    fileId: string;
+    name: string;
+    url: string;
+    thumbnailUrl: string;
+    height: number;
+    width: number;
+    size: number;
+    filePath: string;
+    fileType: string;
+    tags?: string[];
+    isPrivateFile: boolean;
+    customCoordinates: string | null;
+    metadata?: string;
+}
+
+declare interface UploadResponseError {
+    message: string;
+    fileId: string;
+}
 declare module "vue-chartkick"
 declare module "chart.js"
