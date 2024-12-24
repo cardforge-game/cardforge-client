@@ -75,7 +75,7 @@ export default {
     env: {
         SERVER_ENDPOINT:
             process.env.NODE_ENV === "production"
-                ? "wss://cardforge-server.herokuapp.com/"
+                ? "wss://cardforge-server-demo.onrender.com"
                 : "ws://localhost:8080",
     },
 
